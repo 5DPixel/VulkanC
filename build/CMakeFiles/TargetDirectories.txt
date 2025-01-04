@@ -1,0 +1,3 @@
+C:/Users/judet/OneDrive/Desktop/vulkanc/build/CMakeFiles/VulkanExample.dir
+C:/Users/judet/OneDrive/Desktop/vulkanc/build/CMakeFiles/edit_cache.dir
+C:/Users/judet/OneDrive/Desktop/vulkanc/build/CMakeFiles/rebuild_cache.dir

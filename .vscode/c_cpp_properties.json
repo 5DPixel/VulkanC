@@ -1,0 +1,41 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "C:/VulkanSDK/1.3.296.0/Include",
+                "C:/Users/judet/OneDrive/Documents/Libraries/glfw-3.4.bin.WIN64/glfw-3.4.bin.WIN64/include"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE"
+            ],
+            "windowsSdkVersion": "10.0.22621.0",
+            "compilerPath": "cl.exe",
+            "cStandard": "c17",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "windows-msvc-x64"
+        },
+        {
+            "name": "x64",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "C:/VulkanSDK/1.3.296.0/Include",
+                "C:/Users/judet/OneDrive/Documents/Libraries/glfw-3.4.bin.WIN64/glfw-3.4.bin.WIN64/include"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE"
+            ],
+            "windowsSdkVersion": "10.0.22621.0",
+            "compilerPath": "cl.exe",
+            "cStandard": "c17",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "windows-msvc-x64"
+        }
+    ],
+    "version": 4
+}
