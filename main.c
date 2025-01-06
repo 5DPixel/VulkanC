@@ -35,10 +35,11 @@ int main(){
     VkShaderModule fragShaderModule;
     VkFramebuffer* swapChainFrameBuffers;
     VkCommandPool commandPool;
-    VkCommandBuffer commandBuffer;
-    VkSemaphore imageAvailableSemaphore;
-    VkSemaphore renderFinishedSemaphore;
-    VkFence inFlightFence;
+    VkCommandBuffer* commandBuffers;
+    VkSemaphore* imageAvailableSemaphores;
+    VkSemaphore* renderFinishedSemaphores;
+    VkFence* inFlightFences;
+    uint32_t currentFrame = 0;
 
     initWindow(&window, WIDTH, HEIGHT, WINDOW_NAME);
 
@@ -54,17 +55,17 @@ int main(){
     createGraphicsPipeline(&device, swapChainExtent, &pipelineLayout, renderPass, &graphicsPipeline, &vertShaderModule, &fragShaderModule);
     createFramebuffers(&swapChainFrameBuffers, swapChainImageViews, imageCount, renderPass, swapChainExtent, device);
     createCommandPools(&physicalDevice, &commandPool, &surface, device);
-    createCommandBuffer(&commandBuffer, device, commandPool);
-    createSyncObjects(device, &imageAvailableSemaphore, &renderFinishedSemaphore, &inFlightFence);
+    createCommandBuffers(&commandBuffers, device, commandPool);
+    createSyncObjects(device, &imageAvailableSemaphores, &renderFinishedSemaphores, &inFlightFences);
 
     while(!glfwWindowShouldClose(window)) {
         glfwPollEvents();
-        drawFrame(device, inFlightFence, imageAvailableSemaphore, swapChain, commandBuffer, renderPass, swapChainFrameBuffers, swapChainExtent, graphicsPipeline, renderFinishedSemaphore, graphicsQueue, presentQueue);
+        drawFrame(device, inFlightFences, imageAvailableSemaphores, swapChain, commandBuffers, renderPass, swapChainFrameBuffers, swapChainExtent, graphicsPipeline, renderFinishedSemaphores, graphicsQueue, presentQueue, currentFrame);
     }
     
     vkDeviceWaitIdle(device);
 
-    cleanup(window, device, physicalDevice, instance, surface, swapChain, swapChainImageViews, imageCount, vertShaderModule, fragShaderModule, pipelineLayout, renderPass, graphicsPipeline, swapChainFrameBuffers, commandPool, imageAvailableSemaphore, renderFinishedSemaphore, inFlightFence);
+    cleanup(window, device, physicalDevice, instance, surface, swapChain, swapChainImageViews, imageCount, vertShaderModule, fragShaderModule, pipelineLayout, renderPass, graphicsPipeline, swapChainFrameBuffers, commandPool, imageAvailableSemaphores, renderFinishedSemaphores, inFlightFences);
 
     return 0;
 }

@@ -127,7 +127,7 @@ CMAKE_PROJECT_DESCRIPTION:STATIC=
 CMAKE_PROJECT_HOMEPAGE_URL:STATIC=
 
 //Value Computed by CMake
-CMAKE_PROJECT_NAME:STATIC=VulkanExample
+CMAKE_PROJECT_NAME:STATIC=VulkanApp
 
 //Value Computed by CMake
 CMAKE_PROJECT_VERSION:STATIC=1.0
@@ -229,6 +229,15 @@ Project_IS_TOP_LEVEL:STATIC=ON
 
 //Value Computed by CMake
 Project_SOURCE_DIR:STATIC=C:/Users/judet/OneDrive/Desktop/vulkanc
+
+//Value Computed by CMake
+VulkanApp_BINARY_DIR:STATIC=C:/Users/judet/OneDrive/Desktop/vulkanc/build
+
+//Value Computed by CMake
+VulkanApp_IS_TOP_LEVEL:STATIC=ON
+
+//Value Computed by CMake
+VulkanApp_SOURCE_DIR:STATIC=C:/Users/judet/OneDrive/Desktop/vulkanc
 
 //Value Computed by CMake
 VulkanExample_BINARY_DIR:STATIC=C:/Users/judet/OneDrive/Desktop/vulkanc/build
