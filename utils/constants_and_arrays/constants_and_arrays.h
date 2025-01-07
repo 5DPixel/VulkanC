@@ -21,6 +21,12 @@ typedef struct SwapChainSupportDetails {
 } SwapChainSupportDetails;
 
 typedef struct {
+    mat4 model;
+    mat4 view;
+    mat4 projection;
+} UniformBufferObject;
+
+typedef struct {
     vec2 pos;
     vec3 color;
 } Vertex;

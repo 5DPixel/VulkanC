@@ -22,6 +22,7 @@ int main(){
     VkImageView* swapChainImageViews;
     uint32_t imageCount;
     VkRenderPass renderPass;
+    VkDescriptorSetLayout descriptorSetLayout;
     VkPipelineLayout pipelineLayout;
     VkPipeline graphicsPipeline;
     VkShaderModule vertShaderModule;
@@ -37,6 +38,9 @@ int main(){
     VkDeviceMemory vertexBufferMemory;
     VkBuffer indexBuffer;
     VkDeviceMemory indexBufferMemory;
+    VkBuffer* uniformBuffers;
+    VkDeviceMemory* uniformBuffersMemory;
+    void** uniformBuffersMapped;
 
     Vertex vertices[4] = {
         {{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}},
@@ -60,7 +64,8 @@ int main(){
     createSwapChain(&physicalDevice, &surface, window, &swapChain, &device, &swapChainImages, &swapChainImageFormat, &swapChainExtent, &imageCount);
     createImageViews(&swapChainImageViews, swapChainImages, &swapChainImageFormat, &imageCount, &device);
     createRenderPass(swapChainImageFormat, &renderPass, device);
-    createGraphicsPipeline(&device, swapChainExtent, &pipelineLayout, renderPass, &graphicsPipeline, &vertShaderModule, &fragShaderModule);
+    createDescriptorSetLayout(device, &descriptorSetLayout);
+    createGraphicsPipeline(&device, swapChainExtent, &pipelineLayout, renderPass, &graphicsPipeline, &vertShaderModule, &fragShaderModule, descriptorSetLayout);
     createFramebuffers(&swapChainFrameBuffers, swapChainImageViews, imageCount, renderPass, swapChainExtent, device);
     createCommandPools(&physicalDevice, &commandPool, &surface, device);
     createVertexBuffer(vertices, 4, &vertexBuffer, device, physicalDevice, &vertexBufferMemory, commandPool, graphicsQueue);
@@ -75,7 +80,7 @@ int main(){
     
     vkDeviceWaitIdle(device);
 
-    cleanup(window, device, physicalDevice, instance, surface, swapChain, swapChainImageViews, imageCount, vertShaderModule, fragShaderModule, pipelineLayout, renderPass, graphicsPipeline, swapChainFrameBuffers, commandPool, imageAvailableSemaphores, renderFinishedSemaphores, inFlightFences, vertexBuffer, vertexBufferMemory, indexBuffer, indexBufferMemory);
+    cleanup(window, device, physicalDevice, instance, surface, swapChain, swapChainImageViews, imageCount, vertShaderModule, fragShaderModule, pipelineLayout, renderPass, graphicsPipeline, swapChainFrameBuffers, commandPool, imageAvailableSemaphores, renderFinishedSemaphores, inFlightFences, vertexBuffer, vertexBufferMemory, indexBuffer, indexBufferMemory, descriptorSetLayout);
 
     return 0;
 }

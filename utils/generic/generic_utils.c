@@ -31,7 +31,12 @@ void createInstance(VkInstance* instance){
     }
 }
 
-void cleanup(GLFWwindow* window, VkDevice device, VkPhysicalDevice physicalDevice, VkInstance instance, VkSurfaceKHR surface, VkSwapchainKHR swapChain, VkImageView* swapChainImageViews, uint32_t swapChainImageViewCount, VkShaderModule vertShaderModule, VkShaderModule fragShaderModule, VkPipelineLayout pipelineLayout, VkRenderPass renderPass, VkPipeline graphicsPipeline, VkFramebuffer* swapChainFrameBuffers, VkCommandPool commandPool, VkSemaphore* imageAvailableSemaphores, VkSemaphore* renderFinishedSemaphores, VkFence* inFlightFences, VkBuffer vertexBuffer, VkDeviceMemory vertexBufferMemory, VkBuffer indexBuffer, VkDeviceMemory indexBufferMemory){    
+void cleanup(GLFWwindow* window, VkDevice device, VkPhysicalDevice physicalDevice, VkInstance instance, VkSurfaceKHR surface, VkSwapchainKHR swapChain, VkImageView* swapChainImageViews, uint32_t swapChainImageViewCount, VkShaderModule vertShaderModule, VkShaderModule fragShaderModule, VkPipelineLayout pipelineLayout, VkRenderPass renderPass, VkPipeline graphicsPipeline, VkFramebuffer* swapChainFrameBuffers, VkCommandPool commandPool, VkSemaphore* imageAvailableSemaphores, VkSemaphore* renderFinishedSemaphores, VkFence* inFlightFences, VkBuffer vertexBuffer, VkDeviceMemory vertexBufferMemory, VkBuffer indexBuffer, VkDeviceMemory indexBufferMemory, VkDescriptorSetLayout descriptorSetLayout, VkBuffer* uniformBuffers, VkDeviceMemory* uniformBuffersMemory){    
+    for(size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++){
+        vkDestroyBuffer(device, uniformBuffers[i], NULL);
+        vkFreeMemory(device, uniformBuffersMemory[i], NULL);
+    }
+    
     vkDestroyBuffer(device, vertexBuffer, NULL);
     vkFreeMemory(device, vertexBufferMemory, NULL);
 
@@ -41,6 +46,7 @@ void cleanup(GLFWwindow* window, VkDevice device, VkPhysicalDevice physicalDevic
     vkDestroyPipeline(device, graphicsPipeline, NULL);
 
     vkDestroyPipelineLayout(device, pipelineLayout, NULL);
+    vkDestroyDescriptorSetLayout(device, descriptorSetLayout, NULL);
     vkDestroyRenderPass(device, renderPass, NULL);
     
     for(size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++){

@@ -64,3 +64,12 @@
 9	591	7579854112388698	CMakeFiles/VulkanApp.dir/main.c.obj	1543237be0ab5dc3
 28	601	7579854112505576	CMakeFiles/VulkanApp.dir/utils/window/window_utils.c.obj	1a635f1554e22a5c
 601	848	7579854114538935	VulkanApp.exe	3179a230ef5fb230
+31	540	7579882736642356	CMakeFiles/VulkanApp.dir/utils/constants_and_arrays/constants_and_arrays.c.obj	3a9b1d90b909e271
+22	1056	7579882741790401	CMakeFiles/VulkanApp.dir/utils/buffer/buffers_utils.c.obj	8966ae8d4f7b5c9f
+9	1108	7579882742062972	CMakeFiles/VulkanApp.dir/main.c.obj	1543237be0ab5dc3
+40	1155	7579882742818310	CMakeFiles/VulkanApp.dir/utils/device_and_surface/device_utils.c.obj	2800168cf0d0e8a5
+48	1167	7579882742891524	CMakeFiles/VulkanApp.dir/utils/generic/generic_utils.c.obj	d1ceae75d66278af
+65	1218	7579882743456468	CMakeFiles/VulkanApp.dir/utils/graphics/graphics_utils.c.obj	11f8dfb88eed13ed
+547	1350	7579882744793573	CMakeFiles/VulkanApp.dir/utils/swapchain/swapchain_utils.c.obj	d43f726ea491a8d2
+1059	1479	7579882745992589	CMakeFiles/VulkanApp.dir/utils/window/window_utils.c.obj	1a635f1554e22a5c
+1480	1740	7579882748190362	VulkanApp.exe	3179a230ef5fb230

@@ -215,3 +215,48 @@ uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties, V
     fprintf(stderr, "failed to find suitable memory type!");
     return -1;
 }
+
+void createDescriptorSetLayout(VkDevice device, VkDescriptorSetLayout* descriptorSetLayout){
+    VkDescriptorSetLayoutBinding uboLayoutBinding = {0};
+    uboLayoutBinding.binding = 0;
+    uboLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+    uboLayoutBinding.descriptorCount = 1;
+    uboLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+    uboLayoutBinding.pImmutableSamplers = NULL; // Optional
+
+    VkDescriptorSetLayoutCreateInfo layoutInfo = {0};
+    layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+    layoutInfo.bindingCount = 1;
+    layoutInfo.pBindings = &uboLayoutBinding;
+
+    if(vkCreateDescriptorSetLayout(device, &layoutInfo, NULL, descriptorSetLayout) != VK_SUCCESS){
+        fprintf(stderr, "failed to create descriptor set layout!");
+    }
+}
+
+void createUniformBuffers(VkBuffer** uniformBuffers, VkDeviceMemory** uniformBuffersMemory, void** uniformBuffersMapped, VkDevice device, VkPhysicalDevice physicalDevice){
+    VkDeviceSize bufferSize = sizeof(UniformBufferObject);
+
+    *uniformBuffers = (VkBuffer*)malloc(MAX_FRAMES_IN_FLIGHT * sizeof(VkBuffer));
+    *uniformBuffersMemory = (VkDeviceMemory*)malloc(MAX_FRAMES_IN_FLIGHT * sizeof(VkDeviceMemory));
+    uniformBuffersMapped = (void**)malloc(MAX_FRAMES_IN_FLIGHT * sizeof(void*));
+
+    for(size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++){
+        createBuffer(bufferSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, uniformBuffers[i], uniformBuffersMemory[i], device, physicalDevice);
+
+        vkMapMemory(device, *uniformBuffersMemory[i], 0, bufferSize, 0, &uniformBuffersMapped[i]);
+    }
+}
+
+void updateUniformBuffer(uint32_t currentImage){
+    static clock_t start = 0;
+    static bool startInitialized = false;
+
+    if(!startInitialized){
+        start = clock();
+        startInitialized = true;
+    }
+
+    clock_t currentTime = clock();
+    float elapsedTime = (float)(currentTime - start) / CLOCKS_PER_SEC;
+}

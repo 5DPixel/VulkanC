@@ -2,6 +2,7 @@
 
 #include <vulkan/vulkan.h>
 #include <stdio.h>
+#include <time.h>
 #include "../device_and_surface/device_utils.h"
 #include "../constants_and_arrays/constants_and_arrays.h"
 
@@ -15,3 +16,6 @@ void createIndexBuffer(uint16_t* indices, uint32_t indexCount, VkBuffer* indexBu
 VkVertexInputBindingDescription getBindingDescription();
 VkVertexInputAttributeDescription* getAttributeDescriptions();
 uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties, VkPhysicalDevice physicalDevice);
+void createDescriptorSetLayout(VkDevice device, VkDescriptorSetLayout* descriptorSetLayout);
+void createUniformBuffers(VkBuffer** uniformBuffers, VkDeviceMemory** uniformBuffersMemory, void** uniformBuffersMapped, VkDevice device, VkPhysicalDevice physicalDevice);
+void updateUniformBuffer(uint32_t currentImage);
