@@ -6,6 +6,10 @@ int clamp(int value, int min, int max) {
     return value;
 }
 
+float deg2Rad(float degrees){
+    return degrees * (PI / 180.0f);
+}
+
 //Vector functions
 vec3 normalize(vec3 vector){
     float magnitude = sqrt(vector.x * vector.x + vector.y * vector.y + vector.z * vector.z);
@@ -22,6 +26,24 @@ vec3 normalize(vec3 vector){
     return normalized;
 }
 
+vec3 cross(vec3 a, vec3 b){
+    return (vec3){
+        a.y * b.z - a.z * b.y,
+        a.z * b.x - a.x * b.z,
+        a.x * b.y - a.y * b.x
+    };
+}
+
+vec3 subtract(vec3 a, vec3 b){
+    return (vec3){a.x - b.x, a.y - b.y, a.z - b.z};
+}
+
+float dot(vec3 a, vec3 b){
+    return a.x * b.x + a.y * b.y + a.z * b.z;
+}
+
+//Matrix functions
+
 mat4 mat4Identity(){
     mat4 matrix = {0};
 
@@ -33,7 +55,7 @@ mat4 mat4Identity(){
     return matrix;
 }
 
-mat4 mat4Multiply(const mat4 a, const mat4 b) {
+mat4 mat4Multiply(const mat4 a, const mat4 b){
     mat4 multiplyResult = { 0 };
 
     for (int row = 0; row < 4; ++row) {
@@ -73,7 +95,7 @@ mat4 mat4Scale(mat4 matrix, vec3 scalar){
     return matrix;
 }
 
-mat4 mat4RotateX(mat4 matrix, float angle) {
+mat4 mat4RotateX(mat4 matrix, float angle){
     matrix.m[0][0] = 1;
     matrix.m[1][1] = cosf(angle);
     matrix.m[1][2] = -sinf(angle);
@@ -104,4 +126,36 @@ mat4 mat4RotateZ(mat4 matrix, float angle){
     matrix.m[3][3] = 1;
 
     return matrix;
+}
+
+mat4 mat4LookAt(vec3 eye, vec3 center, vec3 up){
+    vec3 f = normalize(subtract(center, eye));
+    vec3 s = normalize(cross(f, up));
+    vec3 u = cross(s, f);
+
+    mat4 result = mat4Identity();
+
+    result.m[0][0] = s.x; result.m[1][0] = s.y; result.m[2][0] = s.z;
+    result.m[0][1] = u.x; result.m[1][1] = u.y; result.m[2][1] = u.z;
+    result.m[0][2] = -f.x; result.m[1][2] = -f.y; result.m[2][2] = -f.z;
+
+    result.m[3][0] = -dot(s, eye);
+    result.m[3][1] = -dot(u, eye);
+    result.m[3][2] = dot(f, eye);
+
+    return result;
+}
+
+mat4 mat4Perspective(float fov, float aspect, float near, float far){
+    mat4 result = {0};
+
+    float tanHalfFov = tanf(fov / 2.0f);
+
+    result.m[0][0] = 1.0f / (aspect * tanHalfFov);
+    result.m[1][1] = -1.0f / tanHalfFov;
+    result.m[2][2] = far / (near - far);
+    result.m[2][3] = -1.0f;
+    result.m[3][2] = (far * near) / (near - far);
+
+    return result;
 }

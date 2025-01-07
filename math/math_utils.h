@@ -18,10 +18,25 @@ typedef struct {
     float m[4][4];
 } mat4;
 
+#define PI 3.14159265358979323846
+
 int clamp(int value, int min, int max);
-void mat4Identity(mat4* matrix);
-void mat4Multiply(mat4* result, const mat4* a, const mat4* b);
-void mat4MVPCalculation(mat4* result, const mat4* model, const mat4* view, const mat4* projection);
-void mat4Translate(mat4* matrix, vec3 translation);
-void mat4Scale(mat4* matrix, vec3 scalar);
-void mat4Rotate(mat4* matrix, vec3 eulerAngles);
+float deg2Rad(float degrees);
+
+//Vector functions
+vec3 normalize(vec3 vector);
+vec3 cross(vec3 a, vec3 b);
+vec3 subtract(vec3 a, vec3 b);
+float dot(vec3 a, vec3 b);
+
+//Matrix functions
+mat4 mat4Identity();
+mat4 mat4Multiply(const mat4 a, const mat4 b);
+mat4 mat4MVPCalculation(const mat4 model, const mat4 view, const mat4 projection);
+mat4 mat4Translate(mat4 matrix, vec3 translation);
+mat4 mat4Scale(mat4 matrix, vec3 scalar);
+mat4 mat4RotateX(mat4 matrix, float angle);
+mat4 mat4RotateY(mat4 matrix, float angle);
+mat4 mat4RotateZ(mat4 matrix, float angle);
+mat4 mat4LookAt(vec3 eye, vec3 center, vec3 up);
+mat4 mat4Perspective(float fov, float aspect, float near, float far);

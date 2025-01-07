@@ -248,7 +248,7 @@ void createUniformBuffers(VkBuffer** uniformBuffers, VkDeviceMemory** uniformBuf
     }
 }
 
-void updateUniformBuffer(uint32_t currentImage){
+void updateUniformBuffer(uint32_t currentImage, VkExtent2D swapChainExtent, void** uniformBuffersMapped){
     static clock_t start = 0;
     static bool startInitialized = false;
 
@@ -259,4 +259,14 @@ void updateUniformBuffer(uint32_t currentImage){
 
     clock_t currentTime = clock();
     float elapsedTime = (float)(currentTime - start) / CLOCKS_PER_SEC;
+
+    UniformBufferObject ubo = {0};
+
+    vec3 eye = {2.0f, 2.0f, 2.0f};
+    vec3 center = {0.0f, 0.0f, 0.0f};
+    vec3 up = {0.0f, 1.0f, 0.0f};
+    ubo.model = mat4RotateZ(mat4Identity(), elapsedTime * deg2Rad(90));
+    ubo.view = mat4LookAt(eye, center, up);
+    ubo.projection = mat4Perspective(deg2Rad(70), swapChainExtent.width / (float)swapChainExtent.height, 0.1f, 10.0f);
+    memcpy(uniformBuffersMapped[currentImage], &ubo, sizeof(ubo));
 }
