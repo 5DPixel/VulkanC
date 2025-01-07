@@ -12,5 +12,16 @@ set(GLFW_PATH "C:/Users/judet/OneDrive/Documents/Libraries/glfw-3.4.bin.WIN64/gl
 include_directories(${GLFW_PATH}/include)
 link_directories(${GLFW_PATH}/lib)
 
-add_executable(VulkanApp main.c vk_utils.c file/file_utils.c math/math_utils.c)
+add_executable(
+    VulkanApp 
+    main.c
+    file/file_utils.c
+    math/math_utils.c
+    utils/buffer/buffers_utils.c
+    utils/constants_and_arrays/constants_and_arrays.c
+    utils/device_and_surface/device_utils.c
+    utils/generic/generic_utils.c
+    utils/graphics/graphics_utils.c
+    utils/swapchain/swapchain_utils.c
+    utils/window/window_utils.c)
 target_link_libraries(VulkanApp ${VULKAN_SDK}/lib/vulkan-1.lib ${GLFW_PATH}/lib-vc2022/glfw3.lib)

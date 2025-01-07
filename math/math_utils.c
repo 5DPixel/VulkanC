@@ -31,8 +31,8 @@ void mat4Multiply(mat4* result, const mat4* a, const mat4* b) {
 
 void mat4MVPCalculation(mat4* result, const mat4* model, const mat4* view, const mat4* projection){
     mat4 mv;
-    mat4_multiply(&mv, model, view);
-    mat4_multiply(result, &mv, projection);
+    mat4Multiply(&mv, model, view);
+    mat4Multiply(result, &mv, projection);
 }
 
 void mat4Translate(mat4* matrix, vec3 translation){
