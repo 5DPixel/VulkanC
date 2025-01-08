@@ -26,7 +26,7 @@ void createCommandBuffers(VkCommandBuffer** commandBuffers, VkDevice device, VkC
     }
 }
 
-void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex, VkRenderPass renderPass, VkFramebuffer* swapChainFramebuffers, VkExtent2D swapChainExtent, VkPipeline graphicsPipeline, VkBuffer vertexBuffer, VkBuffer indexBuffer){
+void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex, VkRenderPass renderPass, VkFramebuffer* swapChainFramebuffers, VkExtent2D swapChainExtent, VkPipeline graphicsPipeline, VkBuffer vertexBuffer, VkBuffer indexBuffer, VkPipelineLayout pipelineLayout, VkDescriptorSet* descriptorSets, uint32_t currentFrame){
     VkCommandBufferBeginInfo beginInfo = {0};
     beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
     beginInfo.flags = 0; // Optional
@@ -70,6 +70,7 @@ void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex, VkR
     scissor.offset.y = 0;
     scissor.extent = swapChainExtent;
     vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
+    vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &descriptorSets[currentFrame], 0, NULL);
     vkCmdDrawIndexed(commandBuffer, 6, 1, 0, 0, 0);
     vkCmdEndRenderPass(commandBuffer);
 
@@ -234,17 +235,17 @@ void createDescriptorSetLayout(VkDevice device, VkDescriptorSetLayout* descripto
     }
 }
 
-void createUniformBuffers(VkBuffer** uniformBuffers, VkDeviceMemory** uniformBuffersMemory, void** uniformBuffersMapped, VkDevice device, VkPhysicalDevice physicalDevice){
+void createUniformBuffers(VkBuffer** uniformBuffers, VkDeviceMemory** uniformBuffersMemory, void*** uniformBuffersMapped, VkDevice device, VkPhysicalDevice physicalDevice){
     VkDeviceSize bufferSize = sizeof(UniformBufferObject);
 
     *uniformBuffers = (VkBuffer*)malloc(MAX_FRAMES_IN_FLIGHT * sizeof(VkBuffer));
     *uniformBuffersMemory = (VkDeviceMemory*)malloc(MAX_FRAMES_IN_FLIGHT * sizeof(VkDeviceMemory));
-    uniformBuffersMapped = (void**)malloc(MAX_FRAMES_IN_FLIGHT * sizeof(void*));
+    *uniformBuffersMapped = (void**)malloc(MAX_FRAMES_IN_FLIGHT * sizeof(void*));
 
     for(size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++){
-        createBuffer(bufferSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, uniformBuffers[i], uniformBuffersMemory[i], device, physicalDevice);
+        createBuffer(bufferSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, &(*uniformBuffers)[i], &(*uniformBuffersMemory)[i], device, physicalDevice);
 
-        vkMapMemory(device, *uniformBuffersMemory[i], 0, bufferSize, 0, &uniformBuffersMapped[i]);
+        vkMapMemory(device, (*uniformBuffersMemory)[i], 0, bufferSize, 0, &(*uniformBuffersMapped)[i]);
     }
 }
 
@@ -265,8 +266,63 @@ void updateUniformBuffer(uint32_t currentImage, VkExtent2D swapChainExtent, void
     vec3 eye = {2.0f, 2.0f, 2.0f};
     vec3 center = {0.0f, 0.0f, 0.0f};
     vec3 up = {0.0f, 1.0f, 0.0f};
-    ubo.model = mat4RotateZ(mat4Identity(), elapsedTime * deg2Rad(90));
+    ubo.model = mat4RotateY(mat4Identity(), elapsedTime * deg2Rad(90));
     ubo.view = mat4LookAt(eye, center, up);
-    ubo.projection = mat4Perspective(deg2Rad(70), swapChainExtent.width / (float)swapChainExtent.height, 0.1f, 10.0f);
+    ubo.projection = mat4Perspective(deg2Rad(45), swapChainExtent.width / (float)swapChainExtent.height, 0.1f, 10.0f);
     memcpy(uniformBuffersMapped[currentImage], &ubo, sizeof(ubo));
+}
+
+void createDescriptorPool(VkDevice device, VkDescriptorPool* descriptorPool){
+    VkDescriptorPoolSize poolSize = {0};
+    poolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+    poolSize.descriptorCount = (uint32_t)MAX_FRAMES_IN_FLIGHT;
+
+    VkDescriptorPoolCreateInfo poolInfo = {0};
+    poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+    poolInfo.poolSizeCount = 1;
+    poolInfo.pPoolSizes = &poolSize;
+    poolInfo.maxSets = (uint32_t)MAX_FRAMES_IN_FLIGHT;
+
+    if(vkCreateDescriptorPool(device, &poolInfo, NULL, descriptorPool) != VK_SUCCESS){
+        fprintf(stderr, "failed to create descriptor pool!");
+    }
+}
+
+void createDescriptorSets(VkDescriptorSetLayout descriptorSetLayout, VkDescriptorPool descriptorPool, VkDescriptorSet** descriptorSets, VkDevice device, VkBuffer* uniformBuffers){
+    VkDescriptorSetLayout layouts[MAX_FRAMES_IN_FLIGHT];
+    for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
+        layouts[i] = descriptorSetLayout;
+    }
+
+
+    VkDescriptorSetAllocateInfo allocInfo = {0};
+    allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+    allocInfo.descriptorPool = descriptorPool;
+    allocInfo.descriptorSetCount = (uint32_t)MAX_FRAMES_IN_FLIGHT;
+    allocInfo.pSetLayouts = layouts;
+
+    *descriptorSets = (VkDescriptorSet*)malloc(MAX_FRAMES_IN_FLIGHT * sizeof(VkDescriptorSet));
+    if(vkAllocateDescriptorSets(device, &allocInfo, *descriptorSets) != VK_SUCCESS){
+        fprintf(stderr, "failed to allocate descriptor sets!");
+    }
+
+    for(size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++){
+        VkDescriptorBufferInfo bufferInfo = {0};
+        bufferInfo.buffer = uniformBuffers[i];
+        bufferInfo.offset = 0;
+        bufferInfo.range = sizeof(UniformBufferObject);
+
+        VkWriteDescriptorSet descriptorWrite = {0};
+        descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+        descriptorWrite.dstSet = (*descriptorSets)[i];
+        descriptorWrite.dstBinding = 0;
+        descriptorWrite.dstArrayElement = 0;
+        descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+        descriptorWrite.descriptorCount = 1;
+        descriptorWrite.pBufferInfo = &bufferInfo;
+        descriptorWrite.pImageInfo = NULL; // Optional
+        descriptorWrite.pTexelBufferView = NULL; // Optional
+
+        vkUpdateDescriptorSets(device, 1, &descriptorWrite, 0, NULL);
+    }
 }

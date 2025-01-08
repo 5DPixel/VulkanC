@@ -56,7 +56,7 @@ mat4 mat4Identity(){
 }
 
 mat4 mat4Multiply(const mat4 a, const mat4 b){
-    mat4 multiplyResult = { 0 };
+    mat4 multiplyResult = mat4Identity();
 
     for (int row = 0; row < 4; ++row) {
         for (int col = 0; col < 4; ++col) {
@@ -71,14 +71,13 @@ mat4 mat4Multiply(const mat4 a, const mat4 b){
 }
 
 mat4 mat4MVPCalculation(const mat4 model, const mat4 view, const mat4 projection){
-    mat4 mv = mat4Multiply(model, view);
-    mat4 result = mat4Multiply(mv, projection);
+    mat4 pv = mat4Multiply(projection, view);
+    mat4 result = mat4Multiply(pv, model);
 
     return result;
 }
 
 mat4 mat4Translate(mat4 matrix, vec3 translation){
-    mat4Identity(matrix);
     matrix.m[3][0] = translation.x;
     matrix.m[3][1] = translation.y;
     matrix.m[3][2] = translation.z;
@@ -87,7 +86,6 @@ mat4 mat4Translate(mat4 matrix, vec3 translation){
 }
 
 mat4 mat4Scale(mat4 matrix, vec3 scalar){
-    mat4Identity(matrix);
     matrix.m[0][0] = scalar.x;
     matrix.m[1][1] = scalar.y;
     matrix.m[2][2] = scalar.z;
@@ -122,7 +120,7 @@ mat4 mat4RotateZ(mat4 matrix, float angle){
     matrix.m[0][1] = -sinf(angle);
     matrix.m[1][0] = sinf(angle);
     matrix.m[1][1] = cosf(angle);
-    matrix.m[2][2] = 1;
+    //matrix.m[2][2] = 1;
     matrix.m[3][3] = 1;
 
     return matrix;
@@ -135,9 +133,10 @@ mat4 mat4LookAt(vec3 eye, vec3 center, vec3 up){
 
     mat4 result = mat4Identity();
 
-    result.m[0][0] = s.x; result.m[1][0] = s.y; result.m[2][0] = s.z;
-    result.m[0][1] = u.x; result.m[1][1] = u.y; result.m[2][1] = u.z;
-    result.m[0][2] = -f.x; result.m[1][2] = -f.y; result.m[2][2] = -f.z;
+    result.m[0][0] = s.x; result.m[1][0] = s.y; result.m[2][0] = s.z; result.m[3][0] = 0.0f;
+    result.m[0][1] = u.x; result.m[1][1] = u.y; result.m[2][1] = u.z; result.m[3][1] = 0.0f;
+    result.m[0][2] = -f.x; result.m[1][2] = -f.y; result.m[2][2] = -f.z; result.m[3][2] = 0.0f;
+    result.m[0][3] = 0.0f; result.m[1][3] = 0.0f; result.m[2][3] = 0.0f; result.m[3][3] = 1.0f;
 
     result.m[3][0] = -dot(s, eye);
     result.m[3][1] = -dot(u, eye);
@@ -146,16 +145,30 @@ mat4 mat4LookAt(vec3 eye, vec3 center, vec3 up){
     return result;
 }
 
-mat4 mat4Perspective(float fov, float aspect, float near, float far){
+mat4 mat4Perspective(float fov, float aspect, float near, float far) {
     mat4 result = {0};
 
     float tanHalfFov = tanf(fov / 2.0f);
 
     result.m[0][0] = 1.0f / (aspect * tanHalfFov);
+    result.m[1][0] = 0.0f;
+    result.m[2][0] = 0.0f;
+    result.m[3][0] = 0.0f;
+
+    result.m[0][1] = 0.0f;
     result.m[1][1] = -1.0f / tanHalfFov;
+    result.m[2][1] = 0.0f;
+    result.m[3][1] = 0.0f;
+
+    result.m[0][2] = 0.0f;
+    result.m[1][2] = 0.0f;
     result.m[2][2] = far / (near - far);
-    result.m[2][3] = -1.0f;
     result.m[3][2] = (far * near) / (near - far);
+
+    result.m[0][3] = 0.0f;
+    result.m[1][3] = 0.0f;
+    result.m[2][3] = -1.0f;
+    result.m[3][3] = 0.0f;
 
     return result;
 }
