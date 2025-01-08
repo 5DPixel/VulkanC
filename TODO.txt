@@ -1,1 +1,1 @@
-Update recordCommandBuffers using the vulkan tutorial guide
+Nothing here
