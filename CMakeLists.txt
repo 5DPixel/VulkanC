@@ -23,5 +23,6 @@ add_executable(
     utils/generic/generic_utils.c
     utils/graphics/graphics_utils.c
     utils/swapchain/swapchain_utils.c
-    utils/window/window_utils.c)
+    utils/window/window_utils.c
+    image/image_parser.c)
 target_link_libraries(VulkanApp ${VULKAN_SDK}/lib/vulkan-1.lib ${GLFW_PATH}/lib-vc2022/glfw3.lib)
