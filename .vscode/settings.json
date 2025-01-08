@@ -4,6 +4,7 @@
         "constants_and_arrays.h": "c",
         "window_utils.h": "c",
         "device_utils.h": "c",
-        "stdbool.h": "c"
+        "stdbool.h": "c",
+        "stb_image.h": "c"
     }
 }

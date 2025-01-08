@@ -43,6 +43,8 @@ int main(){
     void** uniformBuffersMapped;
     VkDescriptorPool descriptorPool;
     VkDescriptorSet* descriptorSets;
+    VkImage textureImage;
+    VkDeviceMemory textureImageMemory;
 
     Vertex vertices[4] = {
         {{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}},
@@ -70,6 +72,7 @@ int main(){
     createGraphicsPipeline(&device, swapChainExtent, &pipelineLayout, renderPass, &graphicsPipeline, &vertShaderModule, &fragShaderModule, descriptorSetLayout);
     createFramebuffers(&swapChainFrameBuffers, swapChainImageViews, imageCount, renderPass, swapChainExtent, device);
     createCommandPools(&physicalDevice, &commandPool, &surface, device);
+    createTextureImage(device, physicalDevice, &textureImage, &textureImageMemory, commandPool, graphicsQueue);
     createVertexBuffer(vertices, 4, &vertexBuffer, device, physicalDevice, &vertexBufferMemory, commandPool, graphicsQueue);
     createIndexBuffer(indices, 6, &indexBuffer, device, physicalDevice, &indexBufferMemory, commandPool, graphicsQueue);
     createUniformBuffers(&uniformBuffers, &uniformBuffersMemory, &uniformBuffersMapped, device, physicalDevice);
@@ -85,7 +88,7 @@ int main(){
     
     vkDeviceWaitIdle(device);
 
-    cleanup(window, device, physicalDevice, instance, surface, swapChain, swapChainImageViews, imageCount, vertShaderModule, fragShaderModule, pipelineLayout, renderPass, graphicsPipeline, swapChainFrameBuffers, commandPool, imageAvailableSemaphores, renderFinishedSemaphores, inFlightFences, vertexBuffer, vertexBufferMemory, indexBuffer, indexBufferMemory, descriptorSetLayout, uniformBuffers, uniformBuffersMemory, descriptorPool);
+    cleanup(window, device, physicalDevice, instance, surface, swapChain, swapChainImageViews, imageCount, vertShaderModule, fragShaderModule, pipelineLayout, renderPass, graphicsPipeline, swapChainFrameBuffers, commandPool, imageAvailableSemaphores, renderFinishedSemaphores, inFlightFences, vertexBuffer, vertexBufferMemory, indexBuffer, indexBufferMemory, descriptorSetLayout, uniformBuffers, uniformBuffersMemory, descriptorPool, textureImage, textureImageMemory);
 
     return 0;
 }

@@ -31,7 +31,10 @@ void createInstance(VkInstance* instance){
     }
 }
 
-void cleanup(GLFWwindow* window, VkDevice device, VkPhysicalDevice physicalDevice, VkInstance instance, VkSurfaceKHR surface, VkSwapchainKHR swapChain, VkImageView* swapChainImageViews, uint32_t swapChainImageViewCount, VkShaderModule vertShaderModule, VkShaderModule fragShaderModule, VkPipelineLayout pipelineLayout, VkRenderPass renderPass, VkPipeline graphicsPipeline, VkFramebuffer* swapChainFrameBuffers, VkCommandPool commandPool, VkSemaphore* imageAvailableSemaphores, VkSemaphore* renderFinishedSemaphores, VkFence* inFlightFences, VkBuffer vertexBuffer, VkDeviceMemory vertexBufferMemory, VkBuffer indexBuffer, VkDeviceMemory indexBufferMemory, VkDescriptorSetLayout descriptorSetLayout, VkBuffer* uniformBuffers, VkDeviceMemory* uniformBuffersMemory, VkDescriptorPool descriptorPool){    
+void cleanup(GLFWwindow* window, VkDevice device, VkPhysicalDevice physicalDevice, VkInstance instance, VkSurfaceKHR surface, VkSwapchainKHR swapChain, VkImageView* swapChainImageViews, uint32_t swapChainImageViewCount, VkShaderModule vertShaderModule, VkShaderModule fragShaderModule, VkPipelineLayout pipelineLayout, VkRenderPass renderPass, VkPipeline graphicsPipeline, VkFramebuffer* swapChainFrameBuffers, VkCommandPool commandPool, VkSemaphore* imageAvailableSemaphores, VkSemaphore* renderFinishedSemaphores, VkFence* inFlightFences, VkBuffer vertexBuffer, VkDeviceMemory vertexBufferMemory, VkBuffer indexBuffer, VkDeviceMemory indexBufferMemory, VkDescriptorSetLayout descriptorSetLayout, VkBuffer* uniformBuffers, VkDeviceMemory* uniformBuffersMemory, VkDescriptorPool descriptorPool, VkImage textureImage, VkDeviceMemory textureImageMemory){    
+    vkFreeMemory(device, textureImageMemory, NULL);
+    vkDestroyImage(device, textureImage, NULL);
+    
     vkDestroyDescriptorPool(device, descriptorPool, NULL);
     
     for(size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++){
