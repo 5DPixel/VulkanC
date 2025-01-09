@@ -158,18 +158,19 @@ void createImageViews(VkImageView** swapChainImageViews, VkImage* swapChainImage
     }
 }
 
-void createFramebuffers(VkFramebuffer** swapChainFrameBuffers, VkImageView* swapChainImageViews, uint32_t imageCount, VkRenderPass renderPass, VkExtent2D swapChainExtent, VkDevice device){
+void createFramebuffers(VkFramebuffer** swapChainFrameBuffers, VkImageView* swapChainImageViews, uint32_t imageCount, VkRenderPass renderPass, VkExtent2D swapChainExtent, VkDevice device, VkImageView depthImageView){
     *swapChainFrameBuffers = (VkFramebuffer*)malloc(imageCount * sizeof(VkFramebuffer));
 
     for(size_t i = 0; i < imageCount; i++){
         VkImageView attachments[] = {
-            swapChainImageViews[i]
+            swapChainImageViews[i],
+            depthImageView
         };
 
         VkFramebufferCreateInfo framebufferInfo = {0};
         framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
         framebufferInfo.renderPass = renderPass;
-        framebufferInfo.attachmentCount = 1;
+        framebufferInfo.attachmentCount = 2;
         framebufferInfo.pAttachments = attachments;
         framebufferInfo.width = swapChainExtent.width;
         framebufferInfo.height = swapChainExtent.height;
@@ -181,10 +182,10 @@ void createFramebuffers(VkFramebuffer** swapChainFrameBuffers, VkImageView* swap
     }
 }
 
-void recreateSwapChain(VkDevice device, VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, GLFWwindow* window, VkSwapchainKHR swapChain, VkImage* swapChainImages, VkFormat swapChainImageFormat, VkExtent2D swapChainExtent, uint32_t imageCount, VkImageView* swapChainImageViews, VkFramebuffer* swapChainFramebuffers, VkRenderPass renderPass){
+void recreateSwapChain(VkDevice device, VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, GLFWwindow* window, VkSwapchainKHR swapChain, VkImage* swapChainImages, VkFormat swapChainImageFormat, VkExtent2D swapChainExtent, uint32_t imageCount, VkImageView* swapChainImageViews, VkFramebuffer* swapChainFramebuffers, VkRenderPass renderPass, VkImageView depthImageView){
     vkDeviceWaitIdle(device);
 
     createSwapChain(&physicalDevice, &surface, window, &swapChain, &device, &swapChainImages, &swapChainImageFormat, &swapChainExtent, &imageCount);
     createImageViews(&swapChainImageViews, swapChainImages, &swapChainImageFormat, &imageCount, &device);
-    createFramebuffers(&swapChainFramebuffers, swapChainImageViews, imageCount, renderPass, swapChainExtent, device); 
+    createFramebuffers(&swapChainFramebuffers, swapChainImageViews, imageCount, renderPass, swapChainExtent, device, depthImageView); 
 }

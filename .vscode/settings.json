@@ -5,6 +5,7 @@
         "window_utils.h": "c",
         "device_utils.h": "c",
         "stdbool.h": "c",
-        "stb_image.h": "c"
+        "stb_image.h": "c",
+        "vector": "c"
     }
 }

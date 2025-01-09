@@ -27,8 +27,9 @@ typedef struct {
 } UniformBufferObject;
 
 typedef struct {
-    vec2 pos;
+    vec3 pos;
     vec3 color;
+    vec2 texCoord;
 } Vertex;
 
 extern const char* validationLayers[1];

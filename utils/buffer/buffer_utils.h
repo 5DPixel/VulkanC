@@ -5,6 +5,7 @@
 #include <time.h>
 #include "../device_and_surface/device_utils.h"
 #include "../constants_and_arrays/constants_and_arrays.h"
+#include "../graphics/graphics_utils.h"
 
 void createCommandPools(VkPhysicalDevice* physicalDevice, VkCommandPool* commandPool, VkSurfaceKHR* surface, VkDevice device);
 void createCommandBuffers(VkCommandBuffer** commandBuffers, VkDevice device, VkCommandPool commandPool);
@@ -20,7 +21,7 @@ void createDescriptorSetLayout(VkDevice device, VkDescriptorSetLayout* descripto
 void createUniformBuffers(VkBuffer** uniformBuffers, VkDeviceMemory** uniformBuffersMemory, void*** uniformBuffersMapped, VkDevice device, VkPhysicalDevice physicalDevice);
 void updateUniformBuffer(uint32_t currentImage, VkExtent2D swapChainExtent, void** uniformBuffersMapped);
 void createDescriptorPool(VkDevice device, VkDescriptorPool* descriptorPool);
-void createDescriptorSets(VkDescriptorSetLayout descriptorSetLayout, VkDescriptorPool descriptorPool, VkDescriptorSet** descriptorSets, VkDevice device, VkBuffer* uniformBuffers);
+void createDescriptorSets(VkDescriptorSetLayout descriptorSetLayout, VkDescriptorPool descriptorPool, VkDescriptorSet** descriptorSets, VkDevice device, VkBuffer* uniformBuffers, VkSampler textureSampler, VkImageView textureImageView);
 VkCommandBuffer beginSingleTimeCommands(VkCommandPool commandPool, VkDevice device);
 void endSingleTimeCommands(VkCommandBuffer commandBuffer, VkQueue graphicsQueue, VkCommandPool commandPool, VkDevice device);
 void transitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, VkCommandPool commandPool, VkDevice device, VkQueue graphicsQueue);

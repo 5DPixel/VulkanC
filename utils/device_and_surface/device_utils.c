@@ -36,13 +36,16 @@ bool isDeviceSuitable(VkPhysicalDevice* device, VkSurfaceKHR* surface){
     QueueFamilyIndices indices = findQueueFamilies(device, surface);
     bool swapChainAdequate = false;
 
+    VkPhysicalDeviceFeatures supportedFeatures;
+    vkGetPhysicalDeviceFeatures(*device, &supportedFeatures);
+
     if(indices.graphicsFamily != -1){
         return true;
     } else {
         return false;
     }
 
-    return (indices.graphicsFamily != INVALID_FAMILY_INDEX && indices.presentFamily != INVALID_FAMILY_INDEX) && swapChainAdequate;
+    return (indices.graphicsFamily != INVALID_FAMILY_INDEX && indices.presentFamily != INVALID_FAMILY_INDEX) && swapChainAdequate && supportedFeatures.samplerAnisotropy;
 }
 
 QueueFamilyIndices findQueueFamilies(VkPhysicalDevice* device, VkSurfaceKHR* surface) {
@@ -148,6 +151,7 @@ void createLogicalDevice(VkDevice* device, VkPhysicalDevice* physicalDevice, VkQ
     free(uniqueQueueFamilies);
 
     VkPhysicalDeviceFeatures deviceFeatures = {0};
+    deviceFeatures.samplerAnisotropy = VK_TRUE;
 
     VkDeviceCreateInfo createInfo = {0};
     createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;

@@ -45,16 +45,27 @@ int main(){
     VkDescriptorSet* descriptorSets;
     VkImage textureImage;
     VkDeviceMemory textureImageMemory;
+    VkImageView textureImageView;
+    VkSampler textureSampler;
+    VkImage depthImage;
+    VkDeviceMemory depthImageMemory;
+    VkImageView depthImageView;
 
-    Vertex vertices[4] = {
-        {{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}},
-        {{0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}},
-        {{0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}},
-        {{-0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}}
+    Vertex vertices[8] = {
+        {{-0.5f, -0.5f, 0.0f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
+        {{0.5f, -0.5f, 0.0f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}},
+        {{0.5f, 0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f}},
+        {{-0.5f, 0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}},
+
+        {{-0.5f, -0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
+        {{0.5f, -0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}},
+        {{0.5f, 0.5f, -0.5f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f}},
+        {{-0.5f, 0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}}
     };
 
     uint16_t indices[] = {
-        0, 1, 2, 2, 3, 0
+        0, 1, 2, 2, 3, 0,
+        4, 5, 6, 6, 7, 4
     };
 
     initWindow(&window, WIDTH, HEIGHT, WINDOW_NAME);
@@ -67,28 +78,31 @@ int main(){
     createLogicalDevice(&device, &physicalDevice, &graphicsQueue, &presentQueue, &surface);
     createSwapChain(&physicalDevice, &surface, window, &swapChain, &device, &swapChainImages, &swapChainImageFormat, &swapChainExtent, &imageCount);
     createImageViews(&swapChainImageViews, swapChainImages, &swapChainImageFormat, &imageCount, &device);
-    createRenderPass(swapChainImageFormat, &renderPass, device);
+    createRenderPass(swapChainImageFormat, &renderPass, device, physicalDevice);
     createDescriptorSetLayout(device, &descriptorSetLayout);
     createGraphicsPipeline(&device, swapChainExtent, &pipelineLayout, renderPass, &graphicsPipeline, &vertShaderModule, &fragShaderModule, descriptorSetLayout);
-    createFramebuffers(&swapChainFrameBuffers, swapChainImageViews, imageCount, renderPass, swapChainExtent, device);
     createCommandPools(&physicalDevice, &commandPool, &surface, device);
+    createDepthResources(&depthImage, &depthImageMemory, &depthImageView, physicalDevice, swapChainExtent, device, &swapChainImageViews, commandPool, graphicsQueue);
+    createFramebuffers(&swapChainFrameBuffers, swapChainImageViews, imageCount, renderPass, swapChainExtent, device, depthImageView);
     createTextureImage(device, physicalDevice, &textureImage, &textureImageMemory, commandPool, graphicsQueue);
-    createVertexBuffer(vertices, 4, &vertexBuffer, device, physicalDevice, &vertexBufferMemory, commandPool, graphicsQueue);
-    createIndexBuffer(indices, 6, &indexBuffer, device, physicalDevice, &indexBufferMemory, commandPool, graphicsQueue);
+    createTextureImageView(textureImage, &textureImageView, device);
+    createTextureSampler(physicalDevice, &textureSampler, device);
+    createVertexBuffer(vertices, 8, &vertexBuffer, device, physicalDevice, &vertexBufferMemory, commandPool, graphicsQueue);
+    createIndexBuffer(indices, 12, &indexBuffer, device, physicalDevice, &indexBufferMemory, commandPool, graphicsQueue);
     createUniformBuffers(&uniformBuffers, &uniformBuffersMemory, &uniformBuffersMapped, device, physicalDevice);
     createDescriptorPool(device, &descriptorPool);
-    createDescriptorSets(descriptorSetLayout, descriptorPool, &descriptorSets, device, uniformBuffers);
+    createDescriptorSets(descriptorSetLayout, descriptorPool, &descriptorSets, device, uniformBuffers, textureSampler, textureImageView);
     createCommandBuffers(&commandBuffers, device, commandPool);
     createSyncObjects(device, &imageAvailableSemaphores, &renderFinishedSemaphores, &inFlightFences);
 
     while(!glfwWindowShouldClose(window)) {
         glfwPollEvents();
-        drawFrame(device, inFlightFences, imageAvailableSemaphores, swapChain, commandBuffers, renderPass, swapChainFrameBuffers, swapChainExtent, graphicsPipeline, renderFinishedSemaphores, graphicsQueue, presentQueue, currentFrame, physicalDevice, surface, window, swapChainImages, swapChainImageFormat, imageCount, swapChainImageViews, vertexBuffer, indexBuffer, pipelineLayout, descriptorSets, uniformBuffersMapped);
+        drawFrame(device, inFlightFences, imageAvailableSemaphores, swapChain, commandBuffers, renderPass, swapChainFrameBuffers, swapChainExtent, graphicsPipeline, renderFinishedSemaphores, graphicsQueue, presentQueue, currentFrame, physicalDevice, surface, window, swapChainImages, swapChainImageFormat, imageCount, swapChainImageViews, vertexBuffer, indexBuffer, pipelineLayout, descriptorSets, uniformBuffersMapped, depthImageView);
     }
     
     vkDeviceWaitIdle(device);
 
-    cleanup(window, device, physicalDevice, instance, surface, swapChain, swapChainImageViews, imageCount, vertShaderModule, fragShaderModule, pipelineLayout, renderPass, graphicsPipeline, swapChainFrameBuffers, commandPool, imageAvailableSemaphores, renderFinishedSemaphores, inFlightFences, vertexBuffer, vertexBufferMemory, indexBuffer, indexBufferMemory, descriptorSetLayout, uniformBuffers, uniformBuffersMemory, descriptorPool, textureImage, textureImageMemory);
+    cleanup(window, device, physicalDevice, instance, surface, swapChain, swapChainImageViews, imageCount, vertShaderModule, fragShaderModule, pipelineLayout, renderPass, graphicsPipeline, swapChainFrameBuffers, commandPool, imageAvailableSemaphores, renderFinishedSemaphores, inFlightFences, vertexBuffer, vertexBufferMemory, indexBuffer, indexBufferMemory, descriptorSetLayout, uniformBuffers, uniformBuffersMemory, descriptorPool, textureImage, textureImageMemory, textureImageView, textureSampler, depthImage, depthImageView, depthImageMemory);
 
     return 0;
 }

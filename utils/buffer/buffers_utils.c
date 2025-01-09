@@ -44,9 +44,16 @@ void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex, VkR
     renderPassInfo.renderArea.offset.y = 0;
     renderPassInfo.renderArea.extent = swapChainExtent;
 
+    VkClearValue* clearValues = (VkClearValue*)malloc(2 * sizeof(VkClearValue));
+    VkClearColorValue clearColorValue = {{0.0f, 0.0f, 0.0f, 1.0f}};
+    VkClearDepthStencilValue clearDepthStencilValue = {1.0f, 0};
+
+    clearValues[0].color = clearColorValue;
+    clearValues[1].depthStencil = clearDepthStencilValue;
+
     VkClearValue clearColor = {{{0.0f, 0.0f, 0.0f, 1.0f}}};
-    renderPassInfo.clearValueCount = 1;
-    renderPassInfo.pClearValues = &clearColor;
+    renderPassInfo.clearValueCount = 2;
+    renderPassInfo.pClearValues = clearValues;
 
     vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
     vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
@@ -71,7 +78,7 @@ void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex, VkR
     scissor.extent = swapChainExtent;
     vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
     vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &descriptorSets[currentFrame], 0, NULL);
-    vkCmdDrawIndexed(commandBuffer, 6, 1, 0, 0, 0);
+    vkCmdDrawIndexed(commandBuffer, 12, 1, 0, 0, 0);
     vkCmdEndRenderPass(commandBuffer);
 
     if (vkEndCommandBuffer(commandBuffer) != VK_SUCCESS) {
@@ -164,16 +171,21 @@ VkVertexInputBindingDescription getBindingDescription(){
 }
 
 VkVertexInputAttributeDescription* getAttributeDescriptions(){
-    VkVertexInputAttributeDescription* attributeDescriptions = (VkVertexInputAttributeDescription*)malloc(2 * sizeof(VkVertexInputAttributeDescription));
+    VkVertexInputAttributeDescription* attributeDescriptions = (VkVertexInputAttributeDescription*)malloc(3 * sizeof(VkVertexInputAttributeDescription));
     attributeDescriptions[0].binding = 0;
     attributeDescriptions[0].location = 0;
-    attributeDescriptions[0].format = VK_FORMAT_R32G32_SFLOAT;
+    attributeDescriptions[0].format = VK_FORMAT_R32G32B32_SFLOAT;
     attributeDescriptions[0].offset = offsetof(Vertex, pos);
 
     attributeDescriptions[1].binding = 0;
     attributeDescriptions[1].location = 1;
     attributeDescriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT;
     attributeDescriptions[1].offset = offsetof(Vertex, color);
+
+    attributeDescriptions[2].binding = 0;
+    attributeDescriptions[2].location = 2;
+    attributeDescriptions[2].format = VK_FORMAT_R32G32_SFLOAT;
+    attributeDescriptions[2].offset = offsetof(Vertex, texCoord);
 
     return attributeDescriptions;
 }
@@ -200,10 +212,22 @@ void createDescriptorSetLayout(VkDevice device, VkDescriptorSetLayout* descripto
     uboLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
     uboLayoutBinding.pImmutableSamplers = NULL; // Optional
 
+    VkDescriptorSetLayoutBinding samplerLayoutBinding = {0};
+    samplerLayoutBinding.binding = 1;
+    samplerLayoutBinding.descriptorCount = 1;
+    samplerLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+    samplerLayoutBinding.pImmutableSamplers = NULL;
+    samplerLayoutBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+
+    VkDescriptorSetLayoutBinding bindings[2] = {
+        uboLayoutBinding,
+        samplerLayoutBinding
+    };
+    
     VkDescriptorSetLayoutCreateInfo layoutInfo = {0};
     layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-    layoutInfo.bindingCount = 1;
-    layoutInfo.pBindings = &uboLayoutBinding;
+    layoutInfo.bindingCount = 2;
+    layoutInfo.pBindings = bindings;
 
     if(vkCreateDescriptorSetLayout(device, &layoutInfo, NULL, descriptorSetLayout) != VK_SUCCESS){
         fprintf(stderr, "failed to create descriptor set layout!");
@@ -241,21 +265,23 @@ void updateUniformBuffer(uint32_t currentImage, VkExtent2D swapChainExtent, void
     vec3 eye = {2.0f, 2.0f, 2.0f};
     vec3 center = {0.0f, 0.0f, 0.0f};
     vec3 up = {0.0f, 1.0f, 0.0f};
-    ubo.model = mat4RotateY(mat4Identity(), elapsedTime * deg2Rad(90));
+    ubo.model = mat4RotateZ(mat4Identity(), elapsedTime * deg2Rad(90));
     ubo.view = mat4LookAt(eye, center, up);
     ubo.projection = mat4Perspective(deg2Rad(45), swapChainExtent.width / (float)swapChainExtent.height, 0.1f, 10.0f);
     memcpy(uniformBuffersMapped[currentImage], &ubo, sizeof(ubo));
 }
 
 void createDescriptorPool(VkDevice device, VkDescriptorPool* descriptorPool){
-    VkDescriptorPoolSize poolSize = {0};
-    poolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-    poolSize.descriptorCount = (uint32_t)MAX_FRAMES_IN_FLIGHT;
+    VkDescriptorPoolSize poolSizes[2] = {0};
+    poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+    poolSizes[0].descriptorCount = (uint32_t)MAX_FRAMES_IN_FLIGHT;
+    poolSizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+    poolSizes[1].descriptorCount = (uint32_t)MAX_FRAMES_IN_FLIGHT;
 
     VkDescriptorPoolCreateInfo poolInfo = {0};
     poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-    poolInfo.poolSizeCount = 1;
-    poolInfo.pPoolSizes = &poolSize;
+    poolInfo.poolSizeCount = 2;
+    poolInfo.pPoolSizes = poolSizes;
     poolInfo.maxSets = (uint32_t)MAX_FRAMES_IN_FLIGHT;
 
     if(vkCreateDescriptorPool(device, &poolInfo, NULL, descriptorPool) != VK_SUCCESS){
@@ -263,7 +289,7 @@ void createDescriptorPool(VkDevice device, VkDescriptorPool* descriptorPool){
     }
 }
 
-void createDescriptorSets(VkDescriptorSetLayout descriptorSetLayout, VkDescriptorPool descriptorPool, VkDescriptorSet** descriptorSets, VkDevice device, VkBuffer* uniformBuffers){
+void createDescriptorSets(VkDescriptorSetLayout descriptorSetLayout, VkDescriptorPool descriptorPool, VkDescriptorSet** descriptorSets, VkDevice device, VkBuffer* uniformBuffers, VkSampler textureSampler, VkImageView textureImageView){
     VkDescriptorSetLayout layouts[MAX_FRAMES_IN_FLIGHT];
     for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
         layouts[i] = descriptorSetLayout;
@@ -287,18 +313,30 @@ void createDescriptorSets(VkDescriptorSetLayout descriptorSetLayout, VkDescripto
         bufferInfo.offset = 0;
         bufferInfo.range = sizeof(UniformBufferObject);
 
-        VkWriteDescriptorSet descriptorWrite = {0};
-        descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-        descriptorWrite.dstSet = (*descriptorSets)[i];
-        descriptorWrite.dstBinding = 0;
-        descriptorWrite.dstArrayElement = 0;
-        descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-        descriptorWrite.descriptorCount = 1;
-        descriptorWrite.pBufferInfo = &bufferInfo;
-        descriptorWrite.pImageInfo = NULL; // Optional
-        descriptorWrite.pTexelBufferView = NULL; // Optional
+        VkDescriptorImageInfo imageInfo = {0};
+        imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+        imageInfo.imageView = textureImageView;
+        imageInfo.sampler = textureSampler;
 
-        vkUpdateDescriptorSets(device, 1, &descriptorWrite, 0, NULL);
+        VkWriteDescriptorSet descriptorWrites[2] = {0};
+
+        descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+        descriptorWrites[0].dstSet = (*descriptorSets)[i];
+        descriptorWrites[0].dstBinding = 0;
+        descriptorWrites[0].dstArrayElement = 0;
+        descriptorWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+        descriptorWrites[0].descriptorCount = 1;
+        descriptorWrites[0].pBufferInfo = &bufferInfo;
+
+        descriptorWrites[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+        descriptorWrites[1].dstSet = (*descriptorSets)[i];
+        descriptorWrites[1].dstBinding = 1;
+        descriptorWrites[1].dstArrayElement = 0;
+        descriptorWrites[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+        descriptorWrites[1].descriptorCount = 1;
+        descriptorWrites[1].pImageInfo = &imageInfo;
+
+        vkUpdateDescriptorSets(device, 2, descriptorWrites, 0, NULL);
     }
 }
 
@@ -366,8 +404,24 @@ void transitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayo
 
         sourceStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
         destinationStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+    } else if(oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL){
+        barrier.srcAccessMask = 0;
+        barrier.dstAccessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
+
+        sourceStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+        destinationStage = VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
     } else {
         fprintf(stderr, "unsupported layer transition!");
+    }
+
+    if (newLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL) {
+        barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
+
+        if (hasStencilComponent(format)) {
+            barrier.subresourceRange.aspectMask |= VK_IMAGE_ASPECT_STENCIL_BIT;
+        }
+    } else {
+        barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
     }
 
     vkCmdPipelineBarrier(
