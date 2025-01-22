@@ -115,12 +115,20 @@ mat4 mat4RotateY(mat4 matrix, float angle){
     return matrix;
 }
 
-mat4 mat4RotateZ(mat4 matrix, float angle){
+mat4 mat4RotateZ(mat4 matrix, float angle) {
     matrix.m[0][0] = cosf(angle);
     matrix.m[0][1] = -sinf(angle);
-    matrix.m[1][0] = sinf(angle);
+    matrix.m[1][0] = sinf(angle); //Normally sinf
     matrix.m[1][1] = cosf(angle);
-    //matrix.m[2][2] = 1;
+    
+    matrix.m[2][0] = 0;
+    matrix.m[2][1] = 0;
+    matrix.m[2][2] = 1;
+    matrix.m[2][3] = 0;
+    
+    matrix.m[3][0] = 0;
+    matrix.m[3][1] = 0;
+    matrix.m[3][2] = 0;
     matrix.m[3][3] = 1;
 
     return matrix;

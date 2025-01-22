@@ -26,7 +26,7 @@ void createCommandBuffers(VkCommandBuffer** commandBuffers, VkDevice device, VkC
     }
 }
 
-void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex, VkRenderPass renderPass, VkFramebuffer* swapChainFramebuffers, VkExtent2D swapChainExtent, VkPipeline graphicsPipeline, VkBuffer vertexBuffer, VkBuffer indexBuffer, VkPipelineLayout pipelineLayout, VkDescriptorSet* descriptorSets, uint32_t currentFrame){
+void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex, VkRenderPass renderPass, VkFramebuffer* swapChainFramebuffers, VkExtent2D swapChainExtent, VkPipeline graphicsPipeline, VkBuffer vertexBuffer, VkBuffer indexBuffer, VkPipelineLayout pipelineLayout, VkDescriptorSet* descriptorSets, uint32_t currentFrame, uint32_t indexCount){
     VkCommandBufferBeginInfo beginInfo = {0};
     beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
     beginInfo.flags = 0; // Optional
@@ -61,7 +61,7 @@ void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex, VkR
     VkBuffer vertexBuffers[] = {vertexBuffer};
     VkDeviceSize offsets[] = {0};
     vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
-    vkCmdBindIndexBuffer(commandBuffer, indexBuffer, 0, VK_INDEX_TYPE_UINT16);
+    vkCmdBindIndexBuffer(commandBuffer, indexBuffer, 0, VK_INDEX_TYPE_UINT32);
 
     VkViewport viewport = {0};
     viewport.x = 0.0f;
@@ -78,7 +78,7 @@ void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex, VkR
     scissor.extent = swapChainExtent;
     vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
     vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &descriptorSets[currentFrame], 0, NULL);
-    vkCmdDrawIndexed(commandBuffer, 12, 1, 0, 0, 0);
+    vkCmdDrawIndexed(commandBuffer, indexCount, 1, 0, 0, 0);
     vkCmdEndRenderPass(commandBuffer);
 
     if (vkEndCommandBuffer(commandBuffer) != VK_SUCCESS) {
@@ -97,7 +97,7 @@ void createVertexBuffer(Vertex* vertices, uint32_t vertexCount, VkBuffer* vertex
     vkMapMemory(device, stagingBufferMemory, 0, bufferSize, 0, &data);
     memcpy(data, vertices, (size_t) bufferSize);
     vkUnmapMemory(device, stagingBufferMemory);
-
+    
     createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, vertexBuffer, vertexBufferMemory, device, physicalDevice);
     copyBuffer(stagingBuffer, *vertexBuffer, bufferSize, commandPool, device, graphicsQueue);
 
@@ -141,7 +141,7 @@ void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size, VkCom
     endSingleTimeCommands(commandBuffer, graphicsQueue, commandPool, device);
 }
 
-void createIndexBuffer(uint16_t* indices, uint32_t indexCount, VkBuffer* indexBuffer, VkDevice device, VkPhysicalDevice physicalDevice, VkDeviceMemory* indexBufferMemory, VkCommandPool commandPool, VkQueue graphicsQueue){
+void createIndexBuffer(uint32_t* indices, uint32_t indexCount, VkBuffer* indexBuffer, VkDevice device, VkPhysicalDevice physicalDevice, VkDeviceMemory* indexBufferMemory, VkCommandPool commandPool, VkQueue graphicsQueue){
     VkDeviceSize bufferSize = sizeof(indices[0]) * indexCount;
 
     VkBuffer stagingBuffer;
@@ -171,7 +171,7 @@ VkVertexInputBindingDescription getBindingDescription(){
 }
 
 VkVertexInputAttributeDescription* getAttributeDescriptions(){
-    VkVertexInputAttributeDescription* attributeDescriptions = (VkVertexInputAttributeDescription*)malloc(3 * sizeof(VkVertexInputAttributeDescription));
+    VkVertexInputAttributeDescription* attributeDescriptions = (VkVertexInputAttributeDescription*)malloc(4 * sizeof(VkVertexInputAttributeDescription));
     attributeDescriptions[0].binding = 0;
     attributeDescriptions[0].location = 0;
     attributeDescriptions[0].format = VK_FORMAT_R32G32B32_SFLOAT;
@@ -186,6 +186,11 @@ VkVertexInputAttributeDescription* getAttributeDescriptions(){
     attributeDescriptions[2].location = 2;
     attributeDescriptions[2].format = VK_FORMAT_R32G32_SFLOAT;
     attributeDescriptions[2].offset = offsetof(Vertex, texCoord);
+
+    attributeDescriptions[3].binding = 0;
+    attributeDescriptions[3].location = 3;
+    attributeDescriptions[3].format = VK_FORMAT_R32G32B32_SFLOAT;
+    attributeDescriptions[3].offset = offsetof(Vertex, normal);
 
     return attributeDescriptions;
 }
@@ -248,7 +253,7 @@ void createUniformBuffers(VkBuffer** uniformBuffers, VkDeviceMemory** uniformBuf
     }
 }
 
-void updateUniformBuffer(uint32_t currentImage, VkExtent2D swapChainExtent, void** uniformBuffersMapped){
+void updateUniformBuffer(uint32_t currentImage, VkExtent2D swapChainExtent, void** uniformBuffersMapped, Camera* camera){
     static clock_t start = 0;
     static bool startInitialized = false;
 
@@ -262,12 +267,14 @@ void updateUniformBuffer(uint32_t currentImage, VkExtent2D swapChainExtent, void
 
     UniformBufferObject ubo = {0};
 
-    vec3 eye = {2.0f, 2.0f, 2.0f};
-    vec3 center = {0.0f, 0.0f, 0.0f};
-    vec3 up = {0.0f, 1.0f, 0.0f};
+    vec3 eye = camera->eye;
+    vec3 center = camera->center;
+    vec3 up = camera->up;
+
     ubo.model = mat4RotateZ(mat4Identity(), elapsedTime * deg2Rad(90));
     ubo.view = mat4LookAt(eye, center, up);
-    ubo.projection = mat4Perspective(deg2Rad(45), swapChainExtent.width / (float)swapChainExtent.height, 0.1f, 10.0f);
+    ubo.projection = mat4Perspective(deg2Rad(camera->fov), swapChainExtent.width / (float)swapChainExtent.height, camera->nearClippingPlane, camera->farClippingPlane);
+
     memcpy(uniformBuffersMapped[currentImage], &ubo, sizeof(ubo));
 }
 

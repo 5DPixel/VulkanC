@@ -7,7 +7,7 @@
 
 # =============================================================================
 # Project: VulkanApp
-# Configurations: Debug
+# Configurations: Release
 # =============================================================================
 # =============================================================================
 
@@ -20,7 +20,7 @@ msvc_deps_prefix = Note: including file:
 #############################################
 # Rule for compiling C files.
 
-rule C_COMPILER__VulkanApp_unscanned_Debug
+rule C_COMPILER__VulkanApp_unscanned_Release
   deps = msvc
   command = ${LAUNCHER}${CODE_CHECK}C:\PROGRA~1\MICROS~4\2022\COMMUN~1\VC\Tools\MSVC\1439~1.335\bin\Hostx64\x64\cl.exe  /nologo $DEFINES $INCLUDES $FLAGS /showIncludes /Fo$out /Fd$TARGET_COMPILE_PDB /FS -c $in
   description = Building C object $out
@@ -29,7 +29,7 @@ rule C_COMPILER__VulkanApp_unscanned_Debug
 #############################################
 # Rule for linking C executable.
 
-rule C_EXECUTABLE_LINKER__VulkanApp_Debug
+rule C_EXECUTABLE_LINKER__VulkanApp_Release
   command = C:\WINDOWS\system32\cmd.exe /C "$PRE_LINK && "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E vs_link_exe --intdir=$OBJECT_DIR --rc=C:\PROGRA~2\WI3CF2~1\10\bin\100226~1.0\x64\rc.exe --mt=C:\PROGRA~2\WI3CF2~1\10\bin\100226~1.0\x64\mt.exe --manifests $MANIFESTS -- C:\PROGRA~1\MICROS~4\2022\COMMUN~1\VC\Tools\MSVC\1439~1.335\bin\Hostx64\x64\link.exe /nologo $in  /out:$TARGET_FILE /implib:$TARGET_IMPLIB /pdb:$TARGET_PDB /version:0.0 $LINK_FLAGS $LINK_PATH $LINK_LIBRARIES && $POST_BUILD"
   description = Linking C executable $TARGET_FILE
   restat = $RESTAT

@@ -1,6 +1,7 @@
 #include <stdio.h>
 
 #include "utils/utils.h"
+#include <stdlib.h>
 
 #define WIDTH 800
 #define HEIGHT 600
@@ -50,28 +51,23 @@ int main(){
     VkImage depthImage;
     VkDeviceMemory depthImageMemory;
     VkImageView depthImageView;
+    Camera camera;
 
-    Vertex vertices[8] = {
-        {{-0.5f, -0.5f, 0.0f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
-        {{0.5f, -0.5f, 0.0f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}},
-        {{0.5f, 0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f}},
-        {{-0.5f, 0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}},
+    Vertex* vertices;
+    uint32_t vertexCount;
+    uint32_t* indices;
+    uint32_t indexCount;
 
-        {{-0.5f, -0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
-        {{0.5f, -0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}},
-        {{0.5f, 0.5f, -0.5f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f}},
-        {{-0.5f, 0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}}
-    };
-
-    uint16_t indices[] = {
-        0, 1, 2, 2, 3, 0,
-        4, 5, 6, 6, 7, 4
-    };
+    camera.eye = (vec3){2.0f, 2.0f, 2.0f};
+    camera.up = (vec3){0.0f, 0.0f, 1.0f};
+    camera.center = (vec3){0.0f, 0.0f, 0.0f};
+    camera.fov = 45.0f;
+    camera.nearClippingPlane = 0.1f;
+    camera.farClippingPlane = 10.0f;
 
     initWindow(&window, WIDTH, HEIGHT, WINDOW_NAME);
 
     printExtensions();
-
     createInstance(&instance);
     createSurface(instance, window, &surface);
     pickPhysicalDevice(instance, &physicalDevice, &surface);
@@ -87,8 +83,9 @@ int main(){
     createTextureImage(device, physicalDevice, &textureImage, &textureImageMemory, commandPool, graphicsQueue);
     createTextureImageView(textureImage, &textureImageView, device);
     createTextureSampler(physicalDevice, &textureSampler, device);
-    createVertexBuffer(vertices, 8, &vertexBuffer, device, physicalDevice, &vertexBufferMemory, commandPool, graphicsQueue);
-    createIndexBuffer(indices, 12, &indexBuffer, device, physicalDevice, &indexBufferMemory, commandPool, graphicsQueue);
+    loadModel(&vertices, &vertexCount, &indices, &indexCount);
+    createVertexBuffer(vertices, vertexCount, &vertexBuffer, device, physicalDevice, &vertexBufferMemory, commandPool, graphicsQueue);
+    createIndexBuffer(indices, indexCount, &indexBuffer, device, physicalDevice, &indexBufferMemory, commandPool, graphicsQueue);
     createUniformBuffers(&uniformBuffers, &uniformBuffersMemory, &uniformBuffersMapped, device, physicalDevice);
     createDescriptorPool(device, &descriptorPool);
     createDescriptorSets(descriptorSetLayout, descriptorPool, &descriptorSets, device, uniformBuffers, textureSampler, textureImageView);
@@ -97,7 +94,8 @@ int main(){
 
     while(!glfwWindowShouldClose(window)) {
         glfwPollEvents();
-        drawFrame(device, inFlightFences, imageAvailableSemaphores, swapChain, commandBuffers, renderPass, swapChainFrameBuffers, swapChainExtent, graphicsPipeline, renderFinishedSemaphores, graphicsQueue, presentQueue, currentFrame, physicalDevice, surface, window, swapChainImages, swapChainImageFormat, imageCount, swapChainImageViews, vertexBuffer, indexBuffer, pipelineLayout, descriptorSets, uniformBuffersMapped, depthImageView);
+        drawFrame(device, inFlightFences, imageAvailableSemaphores, swapChain, commandBuffers, renderPass, swapChainFrameBuffers, swapChainExtent, graphicsPipeline, renderFinishedSemaphores, graphicsQueue, presentQueue, currentFrame, physicalDevice, surface, window, swapChainImages, swapChainImageFormat, imageCount, swapChainImageViews, vertexBuffer, indexBuffer, pipelineLayout, descriptorSets, uniformBuffersMapped, depthImageView, indexCount, &camera);
+        //camera.center.z += 0.01f;
     }
     
     vkDeviceWaitIdle(device);

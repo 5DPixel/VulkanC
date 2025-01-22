@@ -6,6 +6,10 @@
         "device_utils.h": "c",
         "stdbool.h": "c",
         "stb_image.h": "c",
-        "vector": "c"
+        "vector": "c",
+        "stdint.h": "c",
+        "graphics_utils.h": "c",
+        "buffer_utils.h": "c",
+        "vulkan.h": "c"
     }
 }

@@ -24,7 +24,7 @@ char* readFile(const char* fileName, size_t* outSize){
 
     size_t bytesRead = fread(buffer, 1, fileSize, file);
     if (bytesRead != fileSize) {
-        fprintf(stderr, "Error reading the full file content!\n");
+        fprintf(stderr, "error reading full file content!\n");
         free(buffer);
         fclose(file);
         return NULL;
@@ -37,6 +37,4 @@ char* readFile(const char* fileName, size_t* outSize){
     }
 
     return buffer;
-
-    free(buffer);
 }

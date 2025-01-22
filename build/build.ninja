@@ -12,7 +12,7 @@
 
 # =============================================================================
 # Project: VulkanApp
-# Configurations: Debug
+# Configurations: Release
 # =============================================================================
 
 #############################################
@@ -24,7 +24,7 @@ ninja_required_version = 1.5
 #############################################
 # Set configuration variable for custom commands.
 
-CONFIGURATION = Debug
+CONFIGURATION = Release
 # =============================================================================
 # Include auxiliary files.
 
@@ -49,83 +49,99 @@ cmake_ninja_workdir = C$:\Users\judet\OneDrive\Desktop\vulkanc\build\
 
 build cmake_object_order_depends_target_VulkanApp: phony || CMakeFiles\VulkanApp.dir
 
-build CMakeFiles\VulkanApp.dir\main.c.obj: C_COMPILER__VulkanApp_unscanned_Debug C$:\Users\judet\OneDrive\Desktop\vulkanc\main.c || cmake_object_order_depends_target_VulkanApp
-  FLAGS = /DWIN32 /D_WINDOWS /W3 /MDd /Zi /Ob0 /Od /RTC1 -MDd -Zi
+build CMakeFiles\VulkanApp.dir\main.c.obj: C_COMPILER__VulkanApp_unscanned_Release C$:\Users\judet\OneDrive\Desktop\vulkanc\main.c || cmake_object_order_depends_target_VulkanApp
+  FLAGS = /DWIN32 /D_WINDOWS /W3 /MD /O2 /Ob2 /DNDEBUG -MD
   INCLUDES = -IC:\VulkanSDK\1.3.296.0\include -IC:\Users\judet\OneDrive\Documents\Libraries\glfw-3.4.bin.WIN64\glfw-3.4.bin.WIN64\include
   OBJECT_DIR = CMakeFiles\VulkanApp.dir
   OBJECT_FILE_DIR = CMakeFiles\VulkanApp.dir
   TARGET_COMPILE_PDB = CMakeFiles\VulkanApp.dir\
   TARGET_PDB = VulkanApp.pdb
 
-build CMakeFiles\VulkanApp.dir\file\file_utils.c.obj: C_COMPILER__VulkanApp_unscanned_Debug C$:\Users\judet\OneDrive\Desktop\vulkanc\file\file_utils.c || cmake_object_order_depends_target_VulkanApp
-  FLAGS = /DWIN32 /D_WINDOWS /W3 /MDd /Zi /Ob0 /Od /RTC1 -MDd -Zi
+build CMakeFiles\VulkanApp.dir\file\file_utils.c.obj: C_COMPILER__VulkanApp_unscanned_Release C$:\Users\judet\OneDrive\Desktop\vulkanc\file\file_utils.c || cmake_object_order_depends_target_VulkanApp
+  FLAGS = /DWIN32 /D_WINDOWS /W3 /MD /O2 /Ob2 /DNDEBUG -MD
   INCLUDES = -IC:\VulkanSDK\1.3.296.0\include -IC:\Users\judet\OneDrive\Documents\Libraries\glfw-3.4.bin.WIN64\glfw-3.4.bin.WIN64\include
   OBJECT_DIR = CMakeFiles\VulkanApp.dir
   OBJECT_FILE_DIR = CMakeFiles\VulkanApp.dir\file
   TARGET_COMPILE_PDB = CMakeFiles\VulkanApp.dir\
   TARGET_PDB = VulkanApp.pdb
 
-build CMakeFiles\VulkanApp.dir\math\math_utils.c.obj: C_COMPILER__VulkanApp_unscanned_Debug C$:\Users\judet\OneDrive\Desktop\vulkanc\math\math_utils.c || cmake_object_order_depends_target_VulkanApp
-  FLAGS = /DWIN32 /D_WINDOWS /W3 /MDd /Zi /Ob0 /Od /RTC1 -MDd -Zi
+build CMakeFiles\VulkanApp.dir\math\math_utils.c.obj: C_COMPILER__VulkanApp_unscanned_Release C$:\Users\judet\OneDrive\Desktop\vulkanc\math\math_utils.c || cmake_object_order_depends_target_VulkanApp
+  FLAGS = /DWIN32 /D_WINDOWS /W3 /MD /O2 /Ob2 /DNDEBUG -MD
   INCLUDES = -IC:\VulkanSDK\1.3.296.0\include -IC:\Users\judet\OneDrive\Documents\Libraries\glfw-3.4.bin.WIN64\glfw-3.4.bin.WIN64\include
   OBJECT_DIR = CMakeFiles\VulkanApp.dir
   OBJECT_FILE_DIR = CMakeFiles\VulkanApp.dir\math
   TARGET_COMPILE_PDB = CMakeFiles\VulkanApp.dir\
   TARGET_PDB = VulkanApp.pdb
 
-build CMakeFiles\VulkanApp.dir\utils\buffer\buffers_utils.c.obj: C_COMPILER__VulkanApp_unscanned_Debug C$:\Users\judet\OneDrive\Desktop\vulkanc\utils\buffer\buffers_utils.c || cmake_object_order_depends_target_VulkanApp
-  FLAGS = /DWIN32 /D_WINDOWS /W3 /MDd /Zi /Ob0 /Od /RTC1 -MDd -Zi
+build CMakeFiles\VulkanApp.dir\math\hash_map.c.obj: C_COMPILER__VulkanApp_unscanned_Release C$:\Users\judet\OneDrive\Desktop\vulkanc\math\hash_map.c || cmake_object_order_depends_target_VulkanApp
+  FLAGS = /DWIN32 /D_WINDOWS /W3 /MD /O2 /Ob2 /DNDEBUG -MD
+  INCLUDES = -IC:\VulkanSDK\1.3.296.0\include -IC:\Users\judet\OneDrive\Documents\Libraries\glfw-3.4.bin.WIN64\glfw-3.4.bin.WIN64\include
+  OBJECT_DIR = CMakeFiles\VulkanApp.dir
+  OBJECT_FILE_DIR = CMakeFiles\VulkanApp.dir\math
+  TARGET_COMPILE_PDB = CMakeFiles\VulkanApp.dir\
+  TARGET_PDB = VulkanApp.pdb
+
+build CMakeFiles\VulkanApp.dir\utils\buffer\buffers_utils.c.obj: C_COMPILER__VulkanApp_unscanned_Release C$:\Users\judet\OneDrive\Desktop\vulkanc\utils\buffer\buffers_utils.c || cmake_object_order_depends_target_VulkanApp
+  FLAGS = /DWIN32 /D_WINDOWS /W3 /MD /O2 /Ob2 /DNDEBUG -MD
   INCLUDES = -IC:\VulkanSDK\1.3.296.0\include -IC:\Users\judet\OneDrive\Documents\Libraries\glfw-3.4.bin.WIN64\glfw-3.4.bin.WIN64\include
   OBJECT_DIR = CMakeFiles\VulkanApp.dir
   OBJECT_FILE_DIR = CMakeFiles\VulkanApp.dir\utils\buffer
   TARGET_COMPILE_PDB = CMakeFiles\VulkanApp.dir\
   TARGET_PDB = VulkanApp.pdb
 
-build CMakeFiles\VulkanApp.dir\utils\constants_and_arrays\constants_and_arrays.c.obj: C_COMPILER__VulkanApp_unscanned_Debug C$:\Users\judet\OneDrive\Desktop\vulkanc\utils\constants_and_arrays\constants_and_arrays.c || cmake_object_order_depends_target_VulkanApp
-  FLAGS = /DWIN32 /D_WINDOWS /W3 /MDd /Zi /Ob0 /Od /RTC1 -MDd -Zi
+build CMakeFiles\VulkanApp.dir\utils\constants_and_arrays\constants_and_arrays.c.obj: C_COMPILER__VulkanApp_unscanned_Release C$:\Users\judet\OneDrive\Desktop\vulkanc\utils\constants_and_arrays\constants_and_arrays.c || cmake_object_order_depends_target_VulkanApp
+  FLAGS = /DWIN32 /D_WINDOWS /W3 /MD /O2 /Ob2 /DNDEBUG -MD
   INCLUDES = -IC:\VulkanSDK\1.3.296.0\include -IC:\Users\judet\OneDrive\Documents\Libraries\glfw-3.4.bin.WIN64\glfw-3.4.bin.WIN64\include
   OBJECT_DIR = CMakeFiles\VulkanApp.dir
   OBJECT_FILE_DIR = CMakeFiles\VulkanApp.dir\utils\constants_and_arrays
   TARGET_COMPILE_PDB = CMakeFiles\VulkanApp.dir\
   TARGET_PDB = VulkanApp.pdb
 
-build CMakeFiles\VulkanApp.dir\utils\device_and_surface\device_utils.c.obj: C_COMPILER__VulkanApp_unscanned_Debug C$:\Users\judet\OneDrive\Desktop\vulkanc\utils\device_and_surface\device_utils.c || cmake_object_order_depends_target_VulkanApp
-  FLAGS = /DWIN32 /D_WINDOWS /W3 /MDd /Zi /Ob0 /Od /RTC1 -MDd -Zi
+build CMakeFiles\VulkanApp.dir\utils\device_and_surface\device_utils.c.obj: C_COMPILER__VulkanApp_unscanned_Release C$:\Users\judet\OneDrive\Desktop\vulkanc\utils\device_and_surface\device_utils.c || cmake_object_order_depends_target_VulkanApp
+  FLAGS = /DWIN32 /D_WINDOWS /W3 /MD /O2 /Ob2 /DNDEBUG -MD
   INCLUDES = -IC:\VulkanSDK\1.3.296.0\include -IC:\Users\judet\OneDrive\Documents\Libraries\glfw-3.4.bin.WIN64\glfw-3.4.bin.WIN64\include
   OBJECT_DIR = CMakeFiles\VulkanApp.dir
   OBJECT_FILE_DIR = CMakeFiles\VulkanApp.dir\utils\device_and_surface
   TARGET_COMPILE_PDB = CMakeFiles\VulkanApp.dir\
   TARGET_PDB = VulkanApp.pdb
 
-build CMakeFiles\VulkanApp.dir\utils\generic\generic_utils.c.obj: C_COMPILER__VulkanApp_unscanned_Debug C$:\Users\judet\OneDrive\Desktop\vulkanc\utils\generic\generic_utils.c || cmake_object_order_depends_target_VulkanApp
-  FLAGS = /DWIN32 /D_WINDOWS /W3 /MDd /Zi /Ob0 /Od /RTC1 -MDd -Zi
+build CMakeFiles\VulkanApp.dir\utils\generic\generic_utils.c.obj: C_COMPILER__VulkanApp_unscanned_Release C$:\Users\judet\OneDrive\Desktop\vulkanc\utils\generic\generic_utils.c || cmake_object_order_depends_target_VulkanApp
+  FLAGS = /DWIN32 /D_WINDOWS /W3 /MD /O2 /Ob2 /DNDEBUG -MD
   INCLUDES = -IC:\VulkanSDK\1.3.296.0\include -IC:\Users\judet\OneDrive\Documents\Libraries\glfw-3.4.bin.WIN64\glfw-3.4.bin.WIN64\include
   OBJECT_DIR = CMakeFiles\VulkanApp.dir
   OBJECT_FILE_DIR = CMakeFiles\VulkanApp.dir\utils\generic
   TARGET_COMPILE_PDB = CMakeFiles\VulkanApp.dir\
   TARGET_PDB = VulkanApp.pdb
 
-build CMakeFiles\VulkanApp.dir\utils\graphics\graphics_utils.c.obj: C_COMPILER__VulkanApp_unscanned_Debug C$:\Users\judet\OneDrive\Desktop\vulkanc\utils\graphics\graphics_utils.c || cmake_object_order_depends_target_VulkanApp
-  FLAGS = /DWIN32 /D_WINDOWS /W3 /MDd /Zi /Ob0 /Od /RTC1 -MDd -Zi
+build CMakeFiles\VulkanApp.dir\utils\graphics\graphics_utils.c.obj: C_COMPILER__VulkanApp_unscanned_Release C$:\Users\judet\OneDrive\Desktop\vulkanc\utils\graphics\graphics_utils.c || cmake_object_order_depends_target_VulkanApp
+  FLAGS = /DWIN32 /D_WINDOWS /W3 /MD /O2 /Ob2 /DNDEBUG -MD
   INCLUDES = -IC:\VulkanSDK\1.3.296.0\include -IC:\Users\judet\OneDrive\Documents\Libraries\glfw-3.4.bin.WIN64\glfw-3.4.bin.WIN64\include
   OBJECT_DIR = CMakeFiles\VulkanApp.dir
   OBJECT_FILE_DIR = CMakeFiles\VulkanApp.dir\utils\graphics
   TARGET_COMPILE_PDB = CMakeFiles\VulkanApp.dir\
   TARGET_PDB = VulkanApp.pdb
 
-build CMakeFiles\VulkanApp.dir\utils\swapchain\swapchain_utils.c.obj: C_COMPILER__VulkanApp_unscanned_Debug C$:\Users\judet\OneDrive\Desktop\vulkanc\utils\swapchain\swapchain_utils.c || cmake_object_order_depends_target_VulkanApp
-  FLAGS = /DWIN32 /D_WINDOWS /W3 /MDd /Zi /Ob0 /Od /RTC1 -MDd -Zi
+build CMakeFiles\VulkanApp.dir\utils\swapchain\swapchain_utils.c.obj: C_COMPILER__VulkanApp_unscanned_Release C$:\Users\judet\OneDrive\Desktop\vulkanc\utils\swapchain\swapchain_utils.c || cmake_object_order_depends_target_VulkanApp
+  FLAGS = /DWIN32 /D_WINDOWS /W3 /MD /O2 /Ob2 /DNDEBUG -MD
   INCLUDES = -IC:\VulkanSDK\1.3.296.0\include -IC:\Users\judet\OneDrive\Documents\Libraries\glfw-3.4.bin.WIN64\glfw-3.4.bin.WIN64\include
   OBJECT_DIR = CMakeFiles\VulkanApp.dir
   OBJECT_FILE_DIR = CMakeFiles\VulkanApp.dir\utils\swapchain
   TARGET_COMPILE_PDB = CMakeFiles\VulkanApp.dir\
   TARGET_PDB = VulkanApp.pdb
 
-build CMakeFiles\VulkanApp.dir\utils\window\window_utils.c.obj: C_COMPILER__VulkanApp_unscanned_Debug C$:\Users\judet\OneDrive\Desktop\vulkanc\utils\window\window_utils.c || cmake_object_order_depends_target_VulkanApp
-  FLAGS = /DWIN32 /D_WINDOWS /W3 /MDd /Zi /Ob0 /Od /RTC1 -MDd -Zi
+build CMakeFiles\VulkanApp.dir\utils\window\window_utils.c.obj: C_COMPILER__VulkanApp_unscanned_Release C$:\Users\judet\OneDrive\Desktop\vulkanc\utils\window\window_utils.c || cmake_object_order_depends_target_VulkanApp
+  FLAGS = /DWIN32 /D_WINDOWS /W3 /MD /O2 /Ob2 /DNDEBUG -MD
   INCLUDES = -IC:\VulkanSDK\1.3.296.0\include -IC:\Users\judet\OneDrive\Documents\Libraries\glfw-3.4.bin.WIN64\glfw-3.4.bin.WIN64\include
   OBJECT_DIR = CMakeFiles\VulkanApp.dir
   OBJECT_FILE_DIR = CMakeFiles\VulkanApp.dir\utils\window
+  TARGET_COMPILE_PDB = CMakeFiles\VulkanApp.dir\
+  TARGET_PDB = VulkanApp.pdb
+
+build CMakeFiles\VulkanApp.dir\obj\obj_loader.c.obj: C_COMPILER__VulkanApp_unscanned_Release C$:\Users\judet\OneDrive\Desktop\vulkanc\obj\obj_loader.c || cmake_object_order_depends_target_VulkanApp
+  FLAGS = /DWIN32 /D_WINDOWS /W3 /MD /O2 /Ob2 /DNDEBUG -MD
+  INCLUDES = -IC:\VulkanSDK\1.3.296.0\include -IC:\Users\judet\OneDrive\Documents\Libraries\glfw-3.4.bin.WIN64\glfw-3.4.bin.WIN64\include
+  OBJECT_DIR = CMakeFiles\VulkanApp.dir
+  OBJECT_FILE_DIR = CMakeFiles\VulkanApp.dir\obj
   TARGET_COMPILE_PDB = CMakeFiles\VulkanApp.dir\
   TARGET_PDB = VulkanApp.pdb
 
@@ -137,9 +153,9 @@ build CMakeFiles\VulkanApp.dir\utils\window\window_utils.c.obj: C_COMPILER__Vulk
 #############################################
 # Link the executable VulkanApp.exe
 
-build VulkanApp.exe: C_EXECUTABLE_LINKER__VulkanApp_Debug CMakeFiles\VulkanApp.dir\main.c.obj CMakeFiles\VulkanApp.dir\file\file_utils.c.obj CMakeFiles\VulkanApp.dir\math\math_utils.c.obj CMakeFiles\VulkanApp.dir\utils\buffer\buffers_utils.c.obj CMakeFiles\VulkanApp.dir\utils\constants_and_arrays\constants_and_arrays.c.obj CMakeFiles\VulkanApp.dir\utils\device_and_surface\device_utils.c.obj CMakeFiles\VulkanApp.dir\utils\generic\generic_utils.c.obj CMakeFiles\VulkanApp.dir\utils\graphics\graphics_utils.c.obj CMakeFiles\VulkanApp.dir\utils\swapchain\swapchain_utils.c.obj CMakeFiles\VulkanApp.dir\utils\window\window_utils.c.obj | C$:\VulkanSDK\1.3.296.0\lib\vulkan-1.lib C$:\Users\judet\OneDrive\Documents\Libraries\glfw-3.4.bin.WIN64\glfw-3.4.bin.WIN64\lib-vc2022\glfw3.lib
-  FLAGS = /DWIN32 /D_WINDOWS /W3 /MDd /Zi /Ob0 /Od /RTC1 -MDd -Zi
-  LINK_FLAGS = /machine:x64 /debug /INCREMENTAL /subsystem:console
+build VulkanApp.exe: C_EXECUTABLE_LINKER__VulkanApp_Release CMakeFiles\VulkanApp.dir\main.c.obj CMakeFiles\VulkanApp.dir\file\file_utils.c.obj CMakeFiles\VulkanApp.dir\math\math_utils.c.obj CMakeFiles\VulkanApp.dir\math\hash_map.c.obj CMakeFiles\VulkanApp.dir\utils\buffer\buffers_utils.c.obj CMakeFiles\VulkanApp.dir\utils\constants_and_arrays\constants_and_arrays.c.obj CMakeFiles\VulkanApp.dir\utils\device_and_surface\device_utils.c.obj CMakeFiles\VulkanApp.dir\utils\generic\generic_utils.c.obj CMakeFiles\VulkanApp.dir\utils\graphics\graphics_utils.c.obj CMakeFiles\VulkanApp.dir\utils\swapchain\swapchain_utils.c.obj CMakeFiles\VulkanApp.dir\utils\window\window_utils.c.obj CMakeFiles\VulkanApp.dir\obj\obj_loader.c.obj | C$:\VulkanSDK\1.3.296.0\lib\vulkan-1.lib C$:\Users\judet\OneDrive\Documents\Libraries\glfw-3.4.bin.WIN64\glfw-3.4.bin.WIN64\lib-vc2022\glfw3.lib
+  FLAGS = /DWIN32 /D_WINDOWS /W3 /MD /O2 /Ob2 /DNDEBUG -MD
+  LINK_FLAGS = /machine:x64 /INCREMENTAL:NO /subsystem:console
   LINK_LIBRARIES = C:\VulkanSDK\1.3.296.0\lib\vulkan-1.lib  C:\Users\judet\OneDrive\Documents\Libraries\glfw-3.4.bin.WIN64\glfw-3.4.bin.WIN64\lib-vc2022\glfw3.lib  kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib
   LINK_PATH = -LIBPATH:C:\VulkanSDK\1.3.296.0\lib   -LIBPATH:C:\Users\judet\OneDrive\Documents\Libraries\glfw-3.4.bin.WIN64\glfw-3.4.bin.WIN64\lib
   OBJECT_DIR = CMakeFiles\VulkanApp.dir

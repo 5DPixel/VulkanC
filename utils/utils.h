@@ -12,3 +12,4 @@
 #include "swapchain/swapchain_utils.h"
 #include "window/window_utils.h"
 #include "../math/math_utils.h"
+#include "../math/hash_map.h"

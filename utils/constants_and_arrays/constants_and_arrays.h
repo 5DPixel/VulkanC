@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vulkan/vulkan.h>
+#include <stdbool.h>
 #include "../../math/math_utils.h"
 
 #define INVALID_FAMILY_INDEX -1
@@ -29,8 +30,21 @@ typedef struct {
 typedef struct {
     vec3 pos;
     vec3 color;
+    vec3 normal;
     vec2 texCoord;
 } Vertex;
 
+typedef struct {
+    vec3 eye;
+    vec3 center;
+    vec3 up;
+
+    float fov;
+    float nearClippingPlane;
+    float farClippingPlane;
+} Camera;
+
 extern const char* validationLayers[1];
 extern const char* deviceExtensions[1];
+
+bool assertVertexStructsEqual(Vertex v1, Vertex v2);
