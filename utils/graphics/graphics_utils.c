@@ -328,7 +328,7 @@ void createImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling
 
 void createTextureImage(VkDevice device, VkPhysicalDevice physicalDevice, VkImage* textureImage, VkDeviceMemory* textureImageMemory, VkCommandPool commandPool, VkQueue graphicsQueue){
     int texWidth, texHeight, texChannels;
-    stbi_uc* pixels = stbi_load("../textures/mountain.png", &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
+    stbi_uc* pixels = stbi_load("../textures/viking_room.png", &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
     VkDeviceSize imageSize = texWidth * texHeight * 4;
 
     if(!pixels){
@@ -458,5 +458,5 @@ void createDepthResources(VkImage* depthImage, VkDeviceMemory* depthImageMemory,
 
 void loadModel(Vertex** vertices, uint32_t* vertexCount, uint32_t** indices, uint32_t* indexCount) {
     //../models/viking_room.obj" path
-    loadOBJ("../models/mountain.obj", vertices, vertexCount, indices, indexCount);
+    loadOBJ("../models/viking_room.obj", vertices, vertexCount, indices, indexCount);
 }
