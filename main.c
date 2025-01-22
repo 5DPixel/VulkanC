@@ -95,7 +95,19 @@ int main(){
     while(!glfwWindowShouldClose(window)) {
         glfwPollEvents();
         drawFrame(device, inFlightFences, imageAvailableSemaphores, swapChain, commandBuffers, renderPass, swapChainFrameBuffers, swapChainExtent, graphicsPipeline, renderFinishedSemaphores, graphicsQueue, presentQueue, currentFrame, physicalDevice, surface, window, swapChainImages, swapChainImageFormat, imageCount, swapChainImageViews, vertexBuffer, indexBuffer, pipelineLayout, descriptorSets, uniformBuffersMapped, depthImageView, indexCount, &camera);
-        //camera.center.z += 0.01f;
+        
+        if(glfwGetKey(window, GLFW_KEY_E)){
+            camera.center.z += 0.03f;
+        }
+        if(glfwGetKey(window, GLFW_KEY_Q)){
+            camera.center.z -= 0.03f;
+        }
+        if(glfwGetKey(window, GLFW_KEY_A)){
+            camera.center.y -= 0.03f;
+        }
+        if(glfwGetKey(window, GLFW_KEY_D)){
+            camera.center.y += 0.03f;
+        }
     }
     
     vkDeviceWaitIdle(device);
