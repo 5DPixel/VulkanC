@@ -26,6 +26,14 @@ vec3 normalize(vec3 vector){
     return normalized;
 }
 
+vec3 add(vec3 a, vec3 b){
+    return (vec3){
+        a.x + b.x,
+        a.y + b.y,
+        a.z + b.z
+    };
+}
+
 vec3 cross(vec3 a, vec3 b){
     return (vec3){
         a.y * b.z - a.z * b.y,
@@ -118,7 +126,7 @@ mat4 mat4RotateY(mat4 matrix, float angle){
 mat4 mat4RotateZ(mat4 matrix, float angle) {
     matrix.m[0][0] = cosf(angle);
     matrix.m[0][1] = -sinf(angle);
-    matrix.m[1][0] = sinf(angle); //Normally sinf
+    matrix.m[1][0] = sinf(angle);
     matrix.m[1][1] = cosf(angle);
     
     matrix.m[2][0] = 0;
@@ -132,6 +140,15 @@ mat4 mat4RotateZ(mat4 matrix, float angle) {
     matrix.m[3][3] = 1;
 
     return matrix;
+}
+
+mat4 mat4RotateEuler(mat4 matrix, vec3 rotation){
+    mat4 rx = mat4RotateX(matrix, rotation.x);
+    mat4 ry = mat4RotateY(matrix, rotation.y);
+    mat4 rz = mat4RotateZ(matrix, rotation.z);
+
+    mat4 r = mat4Multiply(mat4Multiply(rz, ry), rx);
+    return r;
 }
 
 mat4 mat4LookAt(vec3 eye, vec3 center, vec3 up){

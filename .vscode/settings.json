@@ -10,6 +10,7 @@
         "stdint.h": "c",
         "graphics_utils.h": "c",
         "buffer_utils.h": "c",
-        "vulkan.h": "c"
+        "vulkan.h": "c",
+        "type_traits": "c"
     }
 }

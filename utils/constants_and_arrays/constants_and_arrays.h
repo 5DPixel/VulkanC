@@ -39,10 +39,22 @@ typedef struct {
     vec3 center;
     vec3 up;
 
+    vec3 right;
+    vec3 rotation;
+
+    float speed;
+    float sensitivity;
+
     float fov;
     float nearClippingPlane;
     float farClippingPlane;
 } Camera;
+
+typedef struct {
+    vec3 position;
+    vec3 rotation;
+    vec3 scale;
+} GameObject;
 
 extern const char* validationLayers[1];
 extern const char* deviceExtensions[1];

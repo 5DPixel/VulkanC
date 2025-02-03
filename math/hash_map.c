@@ -23,15 +23,41 @@ vertexHashMapItem* binarySearch(vertexHashMapItem* items, uint32_t size, const V
     return NULL;
 }
 
-vertexHashMapItem* deduplicateVertices(vertexHashMapItem* items, uint32_t size){
-    if(size + size < size){
+int compareVertices(const void* a, const void* b) {
+    vertexHashMapItem* itemA = (vertexHashMapItem*)a;
+    vertexHashMapItem* itemB = (vertexHashMapItem*)b;
+    return assertVertexStructsEqual(itemA->key, itemB->key);
+}
+
+vertexHashMapItem* deduplicateVertices(vertexHashMapItem* items, uint32_t size, uint32_t* newSize) {
+    if (size == 0) {
+        *newSize = 0;
         return NULL;
     }
 
-    printf("%f", items[0].key.pos.x);
-    return NULL;
-}
+    qsort(items, size, sizeof(vertexHashMapItem), compareVertices);
 
+    uint32_t uniqueCount = 1;
+    for (uint32_t i = 1; i < size; i++) {
+        if (assertVertexStructsEqual(items[i].key, items[i - 1].key) != 0) {
+            items[uniqueCount] = items[i];
+            uniqueCount++;
+        }
+    }
+
+    for (uint32_t i = 0; i < uniqueCount; i++) {
+        items[i].value = i;
+    }
+
+    vertexHashMapItem* uniqueItems = realloc(items, uniqueCount * sizeof(vertexHashMapItem));
+    if (!uniqueItems) {
+        free(items);
+        return NULL;
+    }
+
+    *newSize = uniqueCount;
+    return uniqueItems;
+}
 vertexHashMapItem* createVertexHashMap(Vertex* vertices, uint32_t size){
     vertexHashMapItem* items = malloc(size * sizeof(vertexHashMapItem));
 

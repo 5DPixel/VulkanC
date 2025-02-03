@@ -15,8 +15,6 @@ void loadOBJ(const char* filePath, Vertex** vertices, uint32_t* vertexCount, uin
     vec3* normals = NULL;
     uint32_t posCount = 0, texCount = 0, normalCount = 0;
 
-    vertexHashMapItem* vertexMap;
-
     char line[128];
     *vertexCount = 0;
     *indexCount = 0;
@@ -86,9 +84,6 @@ void loadOBJ(const char* filePath, Vertex** vertices, uint32_t* vertexCount, uin
             }
         }
     }
-
-    vertexMap = createVertexHashMap(*vertices, *vertexCount);
-    deduplicateVertices(vertexMap, *vertexCount);
 
     free(positions);
     free(texCoords);

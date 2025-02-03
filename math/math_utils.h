@@ -26,6 +26,7 @@ float deg2Rad(float degrees);
 //Vector functions
 vec3 normalize(vec3 vector);
 vec3 cross(vec3 a, vec3 b);
+vec3 add(vec3 a, vec3 b);
 vec3 subtract(vec3 a, vec3 b);
 float dot(vec3 a, vec3 b);
 
@@ -38,5 +39,6 @@ mat4 mat4Scale(mat4 matrix, vec3 scalar);
 mat4 mat4RotateX(mat4 matrix, float angle);
 mat4 mat4RotateY(mat4 matrix, float angle);
 mat4 mat4RotateZ(mat4 matrix, float angle);
+mat4 mat4RotateEuler(mat4 matrix, vec3 rotation);
 mat4 mat4LookAt(vec3 eye, vec3 center, vec3 up);
 mat4 mat4Perspective(float fov, float aspect, float near, float far);

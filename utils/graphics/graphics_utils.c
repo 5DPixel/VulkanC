@@ -235,7 +235,7 @@ void createGraphicsPipeline(VkDevice* device, VkExtent2D swapChainExtent, VkPipe
     }
 }
 
-void drawFrame(VkDevice device, VkFence* inFlightFences, VkSemaphore* imageAvailableSemaphores, VkSwapchainKHR swapChain, VkCommandBuffer* commandBuffers, VkRenderPass renderPass, VkFramebuffer* swapChainFramebuffers, VkExtent2D swapChainExtent, VkPipeline graphicsPipeline, VkSemaphore* renderFinishedSemaphores, VkQueue graphicsQueue, VkQueue presentQueue, uint32_t currentFrame, VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, GLFWwindow* window, VkImage* swapChainImages, VkFormat swapChainImageFormat, uint32_t imageCount, VkImageView* swapChainImageViews, VkBuffer vertexBuffer, VkBuffer indexBuffer, VkPipelineLayout pipelineLayout, VkDescriptorSet* descriptorSets, void** uniformBuffersMapped, VkImageView depthImageView, uint32_t indexCount, Camera* camera){
+void drawFrame(VkDevice device, VkFence* inFlightFences, VkSemaphore* imageAvailableSemaphores, VkSwapchainKHR swapChain, VkCommandBuffer* commandBuffers, VkRenderPass renderPass, VkFramebuffer* swapChainFramebuffers, VkExtent2D swapChainExtent, VkPipeline graphicsPipeline, VkSemaphore* renderFinishedSemaphores, VkQueue graphicsQueue, VkQueue presentQueue, uint32_t currentFrame, VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, GLFWwindow* window, VkImage* swapChainImages, VkFormat swapChainImageFormat, uint32_t imageCount, VkImageView* swapChainImageViews, VkBuffer vertexBuffer, VkBuffer indexBuffer, VkPipelineLayout pipelineLayout, VkDescriptorSet* descriptorSets, void** uniformBuffersMapped, VkImageView depthImageView, uint32_t indexCount, Camera* camera, GameObject** gameObjects, uint32_t gameObjectCount){
     vkWaitForFences(device, 1, &inFlightFences[currentFrame], VK_TRUE, UINT64_MAX);
     
     uint32_t imageIndex;
@@ -251,9 +251,9 @@ void drawFrame(VkDevice device, VkFence* inFlightFences, VkSemaphore* imageAvail
     vkResetFences(device, 1, &inFlightFences[currentFrame]);
 
     vkResetCommandBuffer(commandBuffers[currentFrame], 0);
-    recordCommandBuffer(commandBuffers[currentFrame], imageIndex, renderPass, swapChainFramebuffers, swapChainExtent, graphicsPipeline, vertexBuffer, indexBuffer, pipelineLayout, descriptorSets, currentFrame, indexCount);
+    recordCommandBuffer(commandBuffers[currentFrame], imageIndex, renderPass, swapChainFramebuffers, swapChainExtent, graphicsPipeline, vertexBuffer, indexBuffer, pipelineLayout, descriptorSets, currentFrame, indexCount, gameObjects, gameObjectCount);
 
-    updateUniformBuffer(currentFrame, swapChainExtent, uniformBuffersMapped, camera);
+    updateUniformBuffer(currentFrame, swapChainExtent, uniformBuffersMapped, camera, gameObjects, gameObjectCount);
 
     VkSubmitInfo submitInfo = {0};
     submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -328,7 +328,7 @@ void createImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling
 
 void createTextureImage(VkDevice device, VkPhysicalDevice physicalDevice, VkImage* textureImage, VkDeviceMemory* textureImageMemory, VkCommandPool commandPool, VkQueue graphicsQueue){
     int texWidth, texHeight, texChannels;
-    stbi_uc* pixels = stbi_load("../textures/viking_room.png", &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
+    stbi_uc* pixels = stbi_load("../textures/grass.png", &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
     VkDeviceSize imageSize = texWidth * texHeight * 4;
 
     if(!pixels){
@@ -458,5 +458,5 @@ void createDepthResources(VkImage* depthImage, VkDeviceMemory* depthImageMemory,
 
 void loadModel(Vertex** vertices, uint32_t* vertexCount, uint32_t** indices, uint32_t* indexCount) {
     //../models/viking_room.obj" path
-    loadOBJ("../models/viking_room.obj", vertices, vertexCount, indices, indexCount);
+    loadOBJ("../models/grass.obj", vertices, vertexCount, indices, indexCount);
 }

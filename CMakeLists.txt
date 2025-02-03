@@ -5,7 +5,7 @@ project(VulkanApp VERSION 1.0 LANGUAGES C)
 set(VULKAN_SDK "C:/VulkanSDK/1.3.296.0")
 set(CMAKE_GENERATOR_PLATFORM x64)
 
-set(CMAKE_BUILD_TYPE Release)
+#set(CMAKE_BUILD_TYPE Release)
 
 include_directories(${VULKAN_SDK}/include)
 link_directories(${VULKAN_SDK}/lib)

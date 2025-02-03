@@ -26,7 +26,7 @@ void createCommandBuffers(VkCommandBuffer** commandBuffers, VkDevice device, VkC
     }
 }
 
-void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex, VkRenderPass renderPass, VkFramebuffer* swapChainFramebuffers, VkExtent2D swapChainExtent, VkPipeline graphicsPipeline, VkBuffer vertexBuffer, VkBuffer indexBuffer, VkPipelineLayout pipelineLayout, VkDescriptorSet* descriptorSets, uint32_t currentFrame, uint32_t indexCount){
+void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex, VkRenderPass renderPass, VkFramebuffer* swapChainFramebuffers, VkExtent2D swapChainExtent, VkPipeline graphicsPipeline, VkBuffer vertexBuffer, VkBuffer indexBuffer, VkPipelineLayout pipelineLayout, VkDescriptorSet* descriptorSets, uint32_t currentFrame, uint32_t indexCount, GameObject** gameObjects, uint32_t gameObjectCount){
     VkCommandBufferBeginInfo beginInfo = {0};
     beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
     beginInfo.flags = 0; // Optional
@@ -78,6 +78,7 @@ void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex, VkR
     scissor.extent = swapChainExtent;
     vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
     vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &descriptorSets[currentFrame], 0, NULL);
+    
     vkCmdDrawIndexed(commandBuffer, indexCount, 1, 0, 0, 0);
     vkCmdEndRenderPass(commandBuffer);
 
@@ -253,28 +254,13 @@ void createUniformBuffers(VkBuffer** uniformBuffers, VkDeviceMemory** uniformBuf
     }
 }
 
-void updateUniformBuffer(uint32_t currentImage, VkExtent2D swapChainExtent, void** uniformBuffersMapped, Camera* camera){
-    static clock_t start = 0;
-    static bool startInitialized = false;
-
-    if(!startInitialized){
-        start = clock();
-        startInitialized = true;
-    }
-
-    clock_t currentTime = clock();
-    float elapsedTime = (float)(currentTime - start) / CLOCKS_PER_SEC;
-
+void updateUniformBuffer(uint32_t currentImage, VkExtent2D swapChainExtent, void** uniformBuffersMapped, Camera* camera, GameObject** gameObjects, uint32_t gameObjectCount) {
     UniformBufferObject ubo = {0};
 
-    vec3 eye = camera->eye;
-    vec3 center = camera->center;
-    vec3 up = camera->up;
-
-    ubo.model = mat4RotateZ(mat4Identity(), elapsedTime * deg2Rad(90));
-    ubo.view = mat4LookAt(eye, center, up);
+    ubo.model = mat4Multiply(mat4Multiply(mat4Translate(mat4Identity(), gameObjects[0]->position), mat4Scale(mat4Identity(), gameObjects[0]->scale)), mat4RotateEuler(mat4Identity(), gameObjects[0]->rotation));
+    ubo.view = mat4LookAt(camera->eye, camera->center, camera->up);
     ubo.projection = mat4Perspective(deg2Rad(camera->fov), swapChainExtent.width / (float)swapChainExtent.height, camera->nearClippingPlane, camera->farClippingPlane);
-
+    
     memcpy(uniformBuffersMapped[currentImage], &ubo, sizeof(ubo));
 }
 
