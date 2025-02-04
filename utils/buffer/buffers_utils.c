@@ -78,8 +78,8 @@ void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex, VkR
     scissor.extent = swapChainExtent;
     vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
     vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &descriptorSets[currentFrame], 0, NULL);
-    
-    vkCmdDrawIndexed(commandBuffer, indexCount, 1, 0, 0, 0);
+
+    vkCmdDrawIndexed(commandBuffer, indexCount, gameObjectCount, 0, 0, 0);
     vkCmdEndRenderPass(commandBuffer);
 
     if (vkEndCommandBuffer(commandBuffer) != VK_SUCCESS) {
@@ -254,10 +254,14 @@ void createUniformBuffers(VkBuffer** uniformBuffers, VkDeviceMemory** uniformBuf
     }
 }
 
-void updateUniformBuffer(uint32_t currentImage, VkExtent2D swapChainExtent, void** uniformBuffersMapped, Camera* camera, GameObject** gameObjects, uint32_t gameObjectCount) {
+void updateUniformBuffer(uint32_t currentImage, VkExtent2D swapChainExtent, void** uniformBuffersMapped, Camera* camera, GameObject* gameObjects, uint32_t gameObjectCount) {
     UniformBufferObject ubo = {0};
 
-    ubo.model = mat4Multiply(mat4Multiply(mat4Translate(mat4Identity(), gameObjects[0]->position), mat4Scale(mat4Identity(), gameObjects[0]->scale)), mat4RotateEuler(mat4Identity(), gameObjects[0]->rotation));
+    for(uint32_t i = 0; i < gameObjectCount; i++){
+        ubo.modelMatrices[i] = mat4Multiply(mat4Multiply(mat4Translate(mat4Identity(), gameObjects[i].position), mat4Scale(mat4Identity(), gameObjects[i].scale)), mat4RotateEuler(mat4Identity(), gameObjects[i].rotation));
+    }
+    //ubo.modelMatrices[0] = mat4Multiply(mat4Multiply(mat4Translate(mat4Identity(), gameObjects[0]->position), mat4Scale(mat4Identity(), gameObjects[0]->scale)), mat4RotateEuler(mat4Identity(), gameObjects[0]->rotation));
+    //ubo.modelMatrices[1] = mat4Multiply(mat4Multiply(mat4Translate(mat4Identity(), (vec3){1.0f, 1.0f, 3.5f}), mat4Scale(mat4Identity(), (vec3){0.3f, 0.3f, 0.3f})), mat4RotateEuler(mat4Identity(), (vec3){0.0f, 0.0f, 0.0f}));
     ubo.view = mat4LookAt(camera->eye, camera->center, camera->up);
     ubo.projection = mat4Perspective(deg2Rad(camera->fov), swapChainExtent.width / (float)swapChainExtent.height, camera->nearClippingPlane, camera->farClippingPlane);
     

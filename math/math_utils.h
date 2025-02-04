@@ -28,6 +28,7 @@ vec3 normalize(vec3 vector);
 vec3 cross(vec3 a, vec3 b);
 vec3 add(vec3 a, vec3 b);
 vec3 subtract(vec3 a, vec3 b);
+vec3 scale(vec3 vector, float scalar);
 float dot(vec3 a, vec3 b);
 
 //Matrix functions

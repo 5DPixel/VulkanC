@@ -34,6 +34,14 @@ vec3 add(vec3 a, vec3 b){
     };
 }
 
+vec3 scale(vec3 vector, float scalar) {
+    return (vec3){
+        vector.x * scalar,
+        vector.y * scalar,
+        vector.z * scalar
+    };
+}
+
 vec3 cross(vec3 a, vec3 b){
     return (vec3){
         a.y * b.z - a.z * b.y,

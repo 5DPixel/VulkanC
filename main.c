@@ -55,7 +55,7 @@ int main()
     Camera camera;
 
     GameObject cube;
-    GameObject* objects = (GameObject*)malloc(2 * sizeof(GameObject));
+    GameObject* objects = (GameObject*)malloc(4 * sizeof(GameObject));
 
     Vertex *vertices;
     uint32_t vertexCount;
@@ -68,18 +68,24 @@ int main()
     camera.fov = 70.0f;
     camera.nearClippingPlane = 0.1f;
     camera.farClippingPlane = 10.0f;
-    camera.speed = 0.03f;
-    camera.sensitivity = 0.01f;
+    camera.speed = 0.05f;
+    camera.sensitivity = 0.08f;
 
     objects[0].position = (vec3){1.0f, 1.0f, 1.0f};
     objects[0].rotation = (vec3){0.0f, 0.0f, 0.0f};
     objects[0].scale = (vec3){0.3f, 0.3f, 0.3f};
 
-    objects[1].position = (vec3){1.0f, 1.0f, 2.0f};
+    objects[1].position = (vec3){1.0f, 3.0f, 1.0f};
     objects[1].rotation = (vec3){0.0f, 0.0f, 0.0f};
-    objects[1].scale = (vec3){1.0f, 1.0f, 1.0f};
+    objects[1].scale = (vec3){0.3f, 0.3f, 0.3f};
 
-    float a = 0.0f;
+    objects[2].position = (vec3){3.0f, 1.0f, 1.0f};
+    objects[2].rotation = (vec3){0.0f, 0.0f, 0.0f};
+    objects[2].scale = (vec3){0.3f, 0.3f, 0.3f};
+
+    objects[3].position = (vec3){3.0f, 3.0f, 1.0f};
+    objects[3].rotation = (vec3){0.0f, 0.0f, 0.0f};
+    objects[3].scale = (vec3){0.3f, 0.3f, 0.3f};
 
     initWindow(&window, WIDTH, HEIGHT, WINDOW_NAME);
 
@@ -108,10 +114,76 @@ int main()
     createCommandBuffers(&commandBuffers, device, commandPool);
     createSyncObjects(device, &imageAvailableSemaphores, &renderFinishedSemaphores, &inFlightFences);
 
+    double lastX = WIDTH / 2, lastY = HEIGHT / 2;
+    float yaw = -90.0f, pitch = 0.0f;
+
     while (!glfwWindowShouldClose(window))
     {
         glfwPollEvents();
-        drawFrame(device, inFlightFences, imageAvailableSemaphores, swapChain, commandBuffers, renderPass, swapChainFrameBuffers, swapChainExtent, graphicsPipeline, renderFinishedSemaphores, graphicsQueue, presentQueue, currentFrame, physicalDevice, surface, window, swapChainImages, swapChainImageFormat, imageCount, swapChainImageViews, vertexBuffer, indexBuffer, pipelineLayout, descriptorSets, uniformBuffersMapped, depthImageView, indexCount, &camera, &objects, 1);
+        drawFrame(device, inFlightFences, imageAvailableSemaphores, swapChain, commandBuffers, renderPass, swapChainFrameBuffers, swapChainExtent, graphicsPipeline, renderFinishedSemaphores, graphicsQueue, presentQueue, currentFrame, physicalDevice, surface, window, swapChainImages, swapChainImageFormat, imageCount, swapChainImageViews, vertexBuffer, indexBuffer, pipelineLayout, descriptorSets, uniformBuffersMapped, depthImageView, indexCount, &camera, objects, 4);
+
+        if(glfwGetKey(window, GLFW_KEY_W)){
+            vec3 direction = normalize(subtract(camera.center, camera.eye));
+            camera.eye = add(camera.eye, scale(direction, camera.speed));
+            camera.center = add(camera.center, scale(direction, camera.speed));
+        }
+
+        if(glfwGetKey(window, GLFW_KEY_S)){
+            vec3 direction = normalize(subtract(camera.center, camera.eye));
+            camera.eye = subtract(camera.eye, scale(direction, camera.speed));
+            camera.center = subtract(camera.center, scale(direction, camera.speed));
+        }
+
+        if(glfwGetKey(window, GLFW_KEY_A)){
+            vec3 forward = normalize(subtract(camera.center, camera.eye));
+            vec3 right = cross(forward, camera.up);
+            right = normalize(right);
+            camera.eye = subtract(camera.eye, scale(right, camera.speed));
+            camera.center = subtract(camera.center, scale(right, camera.speed));
+        }
+
+        if(glfwGetKey(window, GLFW_KEY_D)){
+            vec3 forward = normalize(subtract(camera.center, camera.eye));
+            vec3 right = cross(forward, camera.up);
+            right = normalize(right);
+            camera.eye = add(camera.eye, scale(right, camera.speed));
+            camera.center = add(camera.center, scale(right, camera.speed));
+        }
+
+        if(glfwGetKey(window, GLFW_KEY_E)){
+            vec3 up = normalize(camera.up);
+            camera.eye = add(camera.eye, scale(up, camera.speed));
+            camera.center = add(camera.center, scale(up, camera.speed));
+        }
+
+        if(glfwGetKey(window, GLFW_KEY_Q)){
+            vec3 up = normalize(camera.up);
+            camera.eye = subtract(camera.eye, scale(up, camera.speed));
+            camera.center = subtract(camera.center, scale(up, camera.speed));
+        }
+
+        double xPos, yPos;
+        glfwGetCursorPos(window, &xPos, &yPos);
+
+        float xOffset = (xPos - lastX) * camera.sensitivity;
+        float yOffset = (lastY - yPos) * camera.sensitivity;
+
+        lastX = xPos;
+        lastY = yPos;
+
+        yaw -= xOffset;
+        pitch += yOffset;
+
+        if (pitch > 89.0f) pitch = 89.0f;
+        if (pitch < -89.0f) pitch = -89.0f;
+
+        vec3 direction;
+        direction.x = cosf(deg2Rad(yaw)) * cosf(deg2Rad(pitch));
+        direction.z = sinf(deg2Rad(pitch));
+        direction.y = sinf(deg2Rad(yaw)) * cosf(deg2Rad(pitch));
+        direction = normalize(direction);
+
+        camera.center = add(camera.eye, direction);
 
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     }

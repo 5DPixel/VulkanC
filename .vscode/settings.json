@@ -11,6 +11,7 @@
         "graphics_utils.h": "c",
         "buffer_utils.h": "c",
         "vulkan.h": "c",
-        "type_traits": "c"
+        "type_traits": "c",
+        "cmath": "c"
     }
 }

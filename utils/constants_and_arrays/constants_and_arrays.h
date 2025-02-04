@@ -22,7 +22,7 @@ typedef struct SwapChainSupportDetails {
 } SwapChainSupportDetails;
 
 typedef struct {
-    mat4 model;
+    mat4 modelMatrices[128];
     mat4 view;
     mat4 projection;
 } UniformBufferObject;
