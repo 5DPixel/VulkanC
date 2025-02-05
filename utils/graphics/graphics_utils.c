@@ -159,7 +159,7 @@ void createGraphicsPipeline(VkDevice* device, VkExtent2D swapChainExtent, VkPipe
     rasterizer.rasterizerDiscardEnable = VK_FALSE;
     rasterizer.polygonMode = VK_POLYGON_MODE_FILL;
     rasterizer.lineWidth = 1.0f;
-    rasterizer.cullMode = VK_CULL_MODE_NONE;
+    rasterizer.cullMode = VK_CULL_MODE_BACK_BIT;
     rasterizer.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
     rasterizer.depthBiasEnable = VK_FALSE;
     rasterizer.depthBiasConstantFactor = 0.0f; // Optional
@@ -326,9 +326,11 @@ void createImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling
     vkBindImageMemory(device, *image, *imageMemory, 0);
 }
 
-void createTextureImage(VkDevice device, VkPhysicalDevice physicalDevice, VkImage* textureImage, VkDeviceMemory* textureImageMemory, VkCommandPool commandPool, VkQueue graphicsQueue){
+void createTextureImage(VkDevice device, VkPhysicalDevice physicalDevice, VkImage* textureImage, VkDeviceMemory* textureImageMemory, VkCommandPool commandPool, VkQueue graphicsQueue, uint32_t* mipLevels){
     int texWidth, texHeight, texChannels;
     stbi_uc* pixels = stbi_load("../textures/grass.png", &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
+    *mipLevels = (uint32_t)floor(log2(max(texWidth, texHeight))) + 1;
+
     VkDeviceSize imageSize = texWidth * texHeight * 4;
 
     if(!pixels){
@@ -354,7 +356,7 @@ void createTextureImage(VkDevice device, VkPhysicalDevice physicalDevice, VkImag
     vkFreeMemory(device, stagingBufferMemory, NULL);
 }
 
-void createTextureImageView(VkImage textureImage, VkImageView* textureImageView, VkDevice device){
+void createTextureImageView(VkImage textureImage, VkImageView* textureImageView, VkDevice device, uint32_t mipLevels){
     VkImageViewCreateInfo viewInfo = {0};
     viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
     viewInfo.image = textureImage;
@@ -362,7 +364,7 @@ void createTextureImageView(VkImage textureImage, VkImageView* textureImageView,
     viewInfo.format = VK_FORMAT_R8G8B8A8_SRGB;
     viewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
     viewInfo.subresourceRange.baseMipLevel = 0;
-    viewInfo.subresourceRange.levelCount = 1;
+    viewInfo.subresourceRange.levelCount = mipLevels;
     viewInfo.subresourceRange.baseArrayLayer = 0;
     viewInfo.subresourceRange.layerCount = 1;
 

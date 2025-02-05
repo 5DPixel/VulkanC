@@ -45,7 +45,7 @@ void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex, VkR
     renderPassInfo.renderArea.extent = swapChainExtent;
 
     VkClearValue* clearValues = (VkClearValue*)malloc(2 * sizeof(VkClearValue));
-    VkClearColorValue clearColorValue = {{0.0f, 0.0f, 0.0f, 1.0f}};
+    VkClearColorValue clearColorValue = {{0.52f, 0.80f, 0.92f, 1.0f}};
     VkClearDepthStencilValue clearDepthStencilValue = {1.0f, 0};
 
     clearValues[0].color = clearColorValue;
@@ -259,9 +259,8 @@ void updateUniformBuffer(uint32_t currentImage, VkExtent2D swapChainExtent, void
 
     for(uint32_t i = 0; i < gameObjectCount; i++){
         ubo.modelMatrices[i] = mat4Multiply(mat4Multiply(mat4Translate(mat4Identity(), gameObjects[i].position), mat4Scale(mat4Identity(), gameObjects[i].scale)), mat4RotateEuler(mat4Identity(), gameObjects[i].rotation));
+        //ubo.modelMatrices[i] = mat4Multiply(mat4Multiply(mat4Translate(mat4Identity(), gameObjects[i].position), mat4Scale(mat4Identity(), gameObjects[i].scale)), mat4RotateEuler(mat4Identity(), gameObjects[i].rotation));
     }
-    //ubo.modelMatrices[0] = mat4Multiply(mat4Multiply(mat4Translate(mat4Identity(), gameObjects[0]->position), mat4Scale(mat4Identity(), gameObjects[0]->scale)), mat4RotateEuler(mat4Identity(), gameObjects[0]->rotation));
-    //ubo.modelMatrices[1] = mat4Multiply(mat4Multiply(mat4Translate(mat4Identity(), (vec3){1.0f, 1.0f, 3.5f}), mat4Scale(mat4Identity(), (vec3){0.3f, 0.3f, 0.3f})), mat4RotateEuler(mat4Identity(), (vec3){0.0f, 0.0f, 0.0f}));
     ubo.view = mat4LookAt(camera->eye, camera->center, camera->up);
     ubo.projection = mat4Perspective(deg2Rad(camera->fov), swapChainExtent.width / (float)swapChainExtent.height, camera->nearClippingPlane, camera->farClippingPlane);
     

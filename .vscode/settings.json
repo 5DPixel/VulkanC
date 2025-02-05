@@ -12,6 +12,7 @@
         "buffer_utils.h": "c",
         "vulkan.h": "c",
         "type_traits": "c",
-        "cmath": "c"
+        "cmath": "c",
+        "game_logic.h": "c"
     }
 }

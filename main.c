@@ -1,6 +1,7 @@
 #include <stdio.h>
 
 #include "utils/utils.h"
+#include "game/game_logic.h"
 #include <stdlib.h>
 
 #define WIDTH 1280
@@ -45,6 +46,8 @@ int main()
     void **uniformBuffersMapped;
     VkDescriptorPool descriptorPool;
     VkDescriptorSet *descriptorSets;
+    
+    uint32_t mipLevels;
     VkImage textureImage;
     VkDeviceMemory textureImageMemory;
     VkImageView textureImageView;
@@ -55,7 +58,9 @@ int main()
     Camera camera;
 
     GameObject cube;
-    GameObject* objects = (GameObject*)malloc(4 * sizeof(GameObject));
+    GameObject* objects;
+
+    createGameObjects(&objects, 16);
 
     Vertex *vertices;
     uint32_t vertexCount;
@@ -69,23 +74,7 @@ int main()
     camera.nearClippingPlane = 0.1f;
     camera.farClippingPlane = 10.0f;
     camera.speed = 0.05f;
-    camera.sensitivity = 0.08f;
-
-    objects[0].position = (vec3){1.0f, 1.0f, 1.0f};
-    objects[0].rotation = (vec3){0.0f, 0.0f, 0.0f};
-    objects[0].scale = (vec3){0.3f, 0.3f, 0.3f};
-
-    objects[1].position = (vec3){1.0f, 3.0f, 1.0f};
-    objects[1].rotation = (vec3){0.0f, 0.0f, 0.0f};
-    objects[1].scale = (vec3){0.3f, 0.3f, 0.3f};
-
-    objects[2].position = (vec3){3.0f, 1.0f, 1.0f};
-    objects[2].rotation = (vec3){0.0f, 0.0f, 0.0f};
-    objects[2].scale = (vec3){0.3f, 0.3f, 0.3f};
-
-    objects[3].position = (vec3){3.0f, 3.0f, 1.0f};
-    objects[3].rotation = (vec3){0.0f, 0.0f, 0.0f};
-    objects[3].scale = (vec3){0.3f, 0.3f, 0.3f};
+    camera.sensitivity = 0.1f;
 
     initWindow(&window, WIDTH, HEIGHT, WINDOW_NAME);
 
@@ -114,13 +103,13 @@ int main()
     createCommandBuffers(&commandBuffers, device, commandPool);
     createSyncObjects(device, &imageAvailableSemaphores, &renderFinishedSemaphores, &inFlightFences);
 
-    double lastX = WIDTH / 2, lastY = HEIGHT / 2;
+    double lastX = 0, lastY = 0;
     float yaw = -90.0f, pitch = 0.0f;
 
     while (!glfwWindowShouldClose(window))
     {
         glfwPollEvents();
-        drawFrame(device, inFlightFences, imageAvailableSemaphores, swapChain, commandBuffers, renderPass, swapChainFrameBuffers, swapChainExtent, graphicsPipeline, renderFinishedSemaphores, graphicsQueue, presentQueue, currentFrame, physicalDevice, surface, window, swapChainImages, swapChainImageFormat, imageCount, swapChainImageViews, vertexBuffer, indexBuffer, pipelineLayout, descriptorSets, uniformBuffersMapped, depthImageView, indexCount, &camera, objects, 4);
+        drawFrame(device, inFlightFences, imageAvailableSemaphores, swapChain, commandBuffers, renderPass, swapChainFrameBuffers, swapChainExtent, graphicsPipeline, renderFinishedSemaphores, graphicsQueue, presentQueue, currentFrame, physicalDevice, surface, window, swapChainImages, swapChainImageFormat, imageCount, swapChainImageViews, vertexBuffer, indexBuffer, pipelineLayout, descriptorSets, uniformBuffersMapped, depthImageView, indexCount, &camera, objects, 256);
 
         if(glfwGetKey(window, GLFW_KEY_W)){
             vec3 direction = normalize(subtract(camera.center, camera.eye));
