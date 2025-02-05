@@ -23,5 +23,5 @@ void createDescriptorPool(VkDevice device, VkDescriptorPool* descriptorPool);
 void createDescriptorSets(VkDescriptorSetLayout descriptorSetLayout, VkDescriptorPool descriptorPool, VkDescriptorSet** descriptorSets, VkDevice device, VkBuffer* uniformBuffers, VkSampler textureSampler, VkImageView textureImageView);
 VkCommandBuffer beginSingleTimeCommands(VkCommandPool commandPool, VkDevice device);
 void endSingleTimeCommands(VkCommandBuffer commandBuffer, VkQueue graphicsQueue, VkCommandPool commandPool, VkDevice device);
-void transitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, VkCommandPool commandPool, VkDevice device, VkQueue graphicsQueue);
+void transitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, VkCommandPool commandPool, VkDevice device, VkQueue graphicsQueue, uint32_t mipLevels);
 void copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height, VkCommandPool commandPool, VkDevice device, VkQueue graphicsQueue);

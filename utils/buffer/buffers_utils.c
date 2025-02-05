@@ -369,7 +369,7 @@ void endSingleTimeCommands(VkCommandBuffer commandBuffer, VkQueue graphicsQueue,
     vkFreeCommandBuffers(device, commandPool, 1, &commandBuffer);
 }
 
-void transitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, VkCommandPool commandPool, VkDevice device, VkQueue graphicsQueue){
+void transitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, VkCommandPool commandPool, VkDevice device, VkQueue graphicsQueue, uint32_t mipLevels){
     VkCommandBuffer commandBuffer = beginSingleTimeCommands(commandPool, device);
 
     VkImageMemoryBarrier barrier = {0};
@@ -381,7 +381,7 @@ void transitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayo
     barrier.image = image;
     barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
     barrier.subresourceRange.baseMipLevel = 0;
-    barrier.subresourceRange.levelCount = 1;
+    barrier.subresourceRange.levelCount = mipLevels;
     barrier.subresourceRange.baseArrayLayer = 0;
     barrier.subresourceRange.layerCount = 1;
 

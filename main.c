@@ -60,7 +60,7 @@ int main()
     GameObject cube;
     GameObject* objects;
 
-    createGameObjects(&objects, 16);
+    createGameObjects(&objects, 4);
 
     Vertex *vertices;
     uint32_t vertexCount;
@@ -91,9 +91,9 @@ int main()
     createCommandPools(&physicalDevice, &commandPool, &surface, device);
     createDepthResources(&depthImage, &depthImageMemory, &depthImageView, physicalDevice, swapChainExtent, device, &swapChainImageViews, commandPool, graphicsQueue);
     createFramebuffers(&swapChainFrameBuffers, swapChainImageViews, imageCount, renderPass, swapChainExtent, device, depthImageView);
-    createTextureImage(device, physicalDevice, &textureImage, &textureImageMemory, commandPool, graphicsQueue);
-    createTextureImageView(textureImage, &textureImageView, device);
-    createTextureSampler(physicalDevice, &textureSampler, device);
+    createTextureImage(device, physicalDevice, &textureImage, &textureImageMemory, commandPool, graphicsQueue, &mipLevels, VK_FORMAT_R8G8B8A8_SRGB);
+    createTextureImageView(textureImage, &textureImageView, device, mipLevels);
+    createTextureSampler(physicalDevice, &textureSampler, device, mipLevels);
     loadModel(&vertices, &vertexCount, &indices, &indexCount);
     createVertexBuffer(vertices, vertexCount, &vertexBuffer, device, physicalDevice, &vertexBufferMemory, commandPool, graphicsQueue);
     createIndexBuffer(indices, indexCount, &indexBuffer, device, physicalDevice, &indexBufferMemory, commandPool, graphicsQueue);
@@ -109,7 +109,7 @@ int main()
     while (!glfwWindowShouldClose(window))
     {
         glfwPollEvents();
-        drawFrame(device, inFlightFences, imageAvailableSemaphores, swapChain, commandBuffers, renderPass, swapChainFrameBuffers, swapChainExtent, graphicsPipeline, renderFinishedSemaphores, graphicsQueue, presentQueue, currentFrame, physicalDevice, surface, window, swapChainImages, swapChainImageFormat, imageCount, swapChainImageViews, vertexBuffer, indexBuffer, pipelineLayout, descriptorSets, uniformBuffersMapped, depthImageView, indexCount, &camera, objects, 256);
+        drawFrame(device, inFlightFences, imageAvailableSemaphores, swapChain, commandBuffers, renderPass, swapChainFrameBuffers, swapChainExtent, graphicsPipeline, renderFinishedSemaphores, graphicsQueue, presentQueue, currentFrame, physicalDevice, surface, window, swapChainImages, swapChainImageFormat, imageCount, swapChainImageViews, vertexBuffer, indexBuffer, pipelineLayout, descriptorSets, uniformBuffersMapped, depthImageView, indexCount, &camera, objects, 16);
 
         if(glfwGetKey(window, GLFW_KEY_W)){
             vec3 direction = normalize(subtract(camera.center, camera.eye));
