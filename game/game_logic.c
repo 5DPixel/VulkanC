@@ -7,6 +7,7 @@ float generateTerrainHeight(float x, float y, long seed){
 }
 
 void createGameObjects(GameObject** objects, uint32_t rowCol, long seed){
+    printf("Generated world seed: %d\n", seed);
     *objects = (GameObject*)malloc(rowCol * rowCol * sizeof(GameObject));
 
     float amplitude = 1.5f;

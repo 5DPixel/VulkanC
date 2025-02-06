@@ -29,6 +29,7 @@ add_executable(
     utils/graphics/graphics_utils.c
     utils/swapchain/swapchain_utils.c
     utils/window/window_utils.c
+    utils/physics/physics_utils.c
     image/stb_image.h
     obj/obj_loader.c
     game/game_logic.c

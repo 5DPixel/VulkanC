@@ -185,10 +185,10 @@ int main()
 
         float targetFov = 70.0f;
         if (glfwGetKey(window, GLFW_KEY_C)) {
-            targetFov = 1.0f;
+            targetFov = 10.0f;
         }
 
-        if (targetFov == 1.0f) {
+        if (targetFov == 10.0f) {
             lerp_t += lerpSpeed * deltaTime;
         } else {
             lerp_t -= lerpSpeed * deltaTime;
@@ -197,7 +197,7 @@ int main()
         lerp_t = fmaxf(0.0f, fminf(1.0f, lerp_t));
         float eased_t = easeInOutSine(lerp_t);
 
-        camera.fov = lerp(70.0f, 30.0f, eased_t);
+        camera.fov = lerp(70.0f, 10.0f, eased_t);
 
         double xPos, yPos;
         glfwGetCursorPos(window, &xPos, &yPos);
