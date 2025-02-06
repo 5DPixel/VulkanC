@@ -56,10 +56,12 @@ float perlin2D(float x, float y, float freq, int depth, long seed)
 
 float perlin2DOctaves(float x, float y, float freq, int depth, int octaves, int seed){
     float accumulator = 0.0f;
+    float amplitude = 1.0f;
 
     for(int i = 1; i < octaves; i++){
-        accumulator += perlin2D(x, y, freq, depth, seed);
+        accumulator += perlin2D(x, y, freq, depth, seed) * amplitude;
         freq *= 0.95f;
+        amplitude *= 0.95f;
     }
 
     return accumulator;

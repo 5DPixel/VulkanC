@@ -13,6 +13,7 @@
         "vulkan.h": "c",
         "type_traits": "c",
         "cmath": "c",
-        "game_logic.h": "c"
+        "game_logic.h": "c",
+        "vfc_loader.h": "c"
     }
 }

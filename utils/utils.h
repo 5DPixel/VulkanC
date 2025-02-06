@@ -11,4 +11,5 @@
 #include "graphics/graphics_utils.h"
 #include "swapchain/swapchain_utils.h"
 #include "window/window_utils.h"
+#include "physics/physics_utils.h"
 #include "../math/math_utils.h"

@@ -74,6 +74,57 @@ float smoothInterpolate(float x, float y, float s){
     return lerp(x, y, s * s * (3 - 2 * s));
 }
 
+float distance(vec3 a, vec3 b) {
+    return sqrtf((b.x - a.x) * (b.x - a.x) + 
+                 (b.y - a.y) * (b.y - a.y) + 
+                 (b.z - a.z) * (b.z - a.z));
+}
+
+int checkAABBIntersection(vec3 rayOrigin, vec3 rayDir, vec3 aabbMin, vec3 aabbMax) {
+    float tMin = (aabbMin.x - rayOrigin.x) / rayDir.x;
+    float tMax = (aabbMax.x - rayOrigin.x) / rayDir.x;
+
+    if (tMin > tMax) {
+        float temp = tMin;
+        tMin = tMax;
+        tMax = temp;
+    }
+
+    float tyMin = (aabbMin.y - rayOrigin.y) / rayDir.y;
+    float tyMax = (aabbMax.y - rayOrigin.y) / rayDir.y;
+
+    if (tyMin > tyMax) {
+        float temp = tyMin;
+        tyMin = tyMax;
+        tyMax = temp;
+    }
+
+    if ((tMin > tyMax) || (tyMin > tMax)) {
+        return 0; // No intersection
+    }
+
+    if (tyMin > tMin) tMin = tyMin;
+    if (tyMax < tMax) tMax = tyMax;
+
+    float tzMin = (aabbMin.z - rayOrigin.z) / rayDir.z;
+    float tzMax = (aabbMax.z - rayOrigin.z) / rayDir.z;
+
+    if (tzMin > tzMax) {
+        float temp = tzMin;
+        tzMin = tzMax;
+        tzMax = temp;
+    }
+
+    if ((tMin > tzMax) || (tzMin > tMax)) {
+        return 0; // No intersection
+    }
+
+    if (tzMin > tMin) tMin = tzMin;
+    if (tzMax < tMax) tMax = tzMax;
+
+    return 1; // Intersection
+}
+
 //Matrix functions
 
 mat4 mat4Identity(){

@@ -19,6 +19,7 @@ typedef struct {
 } mat4;
 
 #define PI 3.14159265358979323846
+#define EPSILON 0.001
 
 int clamp(int value, int min, int max);
 float deg2Rad(float degrees);
@@ -34,6 +35,8 @@ float lerp(float start, float end, float t);
 float easeInOutQuad(float t);
 float easeInOutSine(float t);
 float smoothInterpolate(float x, float y, float s);
+float distance(vec3 a, vec3 b);
+int checkAABBIntersection(vec3 rayOrigin, vec3 rayDir, vec3 aabbMin, vec3 aabbMax);
 
 //Matrix functions
 mat4 mat4Identity();

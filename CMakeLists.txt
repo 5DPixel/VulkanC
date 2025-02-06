@@ -33,5 +33,6 @@ add_executable(
     image/stb_image.h
     obj/obj_loader.c
     game/game_logic.c
+    vfc/vfc_loader.c
 )
 target_link_libraries(VulkanApp ${VULKAN_SDK}/lib/vulkan-1.lib ${GLFW_PATH}/lib-vc2022/glfw3.lib)

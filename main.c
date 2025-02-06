@@ -1,6 +1,7 @@
 #include <stdio.h>
 
 #include "utils/utils.h"
+#include "vfc/vfc_loader.h"
 #include "game/game_logic.h"
 #include <stdlib.h>
 #include <time.h>
@@ -85,6 +86,8 @@ int main()
     camera.speed = 0.1f;
     camera.sensitivity = 0.1f;
 
+    writeVFCFile("C:/Users/judet/OneDrive/Desktop/testworld/world/test.vfc", objects, 4096);
+
     initWindow(&window, WIDTH, HEIGHT, WINDOW_NAME);
 
     printExtensions();
@@ -118,8 +121,6 @@ int main()
     float lastFrame = 0.0f, deltaTime = 0.0f;
     float lerpSpeed = 8.0f;
     float lerp_t = 0.0f;
-
-    srand(time(NULL));
 
     while (!glfwWindowShouldClose(window))
     {
@@ -182,6 +183,16 @@ int main()
             camera.center = subtract(camera.center, scale(up, camera.speed));
         }
 
+        // if(glfwGetKey(window, GLFW_KEY_Y)){
+        //     printf("%f %f %f\n", roundf(camera.eye.x / 2.0f) * 2.0f, roundf(camera.eye.y / 2.0f) * 2.0f, floorf(camera.eye.z / 2.0f + 0.2f) * 2.0f);
+        // }
+
+        // if(glfwGetMouseButton(window, 0)){
+        //     vec3 cameraPos = camera.eye;
+        //     vec3 cameraDir = normalize(subtract(camera.center, camera.eye));
+        //     PhysicsRaycastResult raycastResult = physicsRaycast(cameraPos, cameraDir, 64, objects);
+        // }
+
 
         float targetFov = 70.0f;
         if (glfwGetKey(window, GLFW_KEY_C)) {
@@ -222,7 +233,7 @@ int main()
 
         camera.center = add(camera.eye, direction);
 
-        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        //glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     }
 
     vkDeviceWaitIdle(device);
