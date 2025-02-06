@@ -68,12 +68,18 @@ int main()
     GameObject cube;
     GameObject* objects;
 
+    int createWorld = 0;
+    char* worldFilePath = "C:/Users/judet/OneDrive/Desktop/testworld/world/resources/0.vfc";
+
     srand(time(NULL));
 
-    //createGameObjects(&objects, 64, rand());
-    //writeVFCFile("C:/Users/judet/OneDrive/Desktop/testworld/world/resources/0.vfc", objects, 4096);
-    uint32_t gameObjectCount;
-    loadVFCFile("C:/Users/judet/OneDrive/Desktop/testworld/world/resources/0.vfc", &objects, &gameObjectCount);
+    if(createWorld){
+        createGameObjects(&objects, 64, rand());
+        writeVFCFile(worldFilePath, objects, 4096);
+    } else {
+        uint32_t gameObjectCount;
+        loadVFCFile(worldFilePath, &objects, &gameObjectCount);
+    }
 
     Vertex *vertices;
     uint32_t vertexCount;
@@ -234,7 +240,7 @@ int main()
 
         camera.center = add(camera.eye, direction);
 
-        //glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     }
 
     vkDeviceWaitIdle(device);
