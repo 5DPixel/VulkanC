@@ -253,8 +253,8 @@ void drawFrame(VkDevice device, VkFence* inFlightFences, VkSemaphore* imageAvail
     vkResetCommandBuffer(commandBuffers[currentFrame], 0);
     recordCommandBuffer(commandBuffers[currentFrame], imageIndex, renderPass, swapChainFramebuffers, swapChainExtent, graphicsPipeline, vertexBuffer, indexBuffer, pipelineLayout, descriptorSets, currentFrame, indexCount, gameObjects, gameObjectCount);
 
-    updateUniformBuffer(currentFrame, swapChainExtent, uniformBuffersMapped, camera, gameObjects, gameObjectCount);
     updateShaderStorageBuffers(currentFrame, swapChainExtent, shaderStorageBuffersMapped, gameObjects, gameObjectCount);
+    updateUniformBuffer(currentFrame, swapChainExtent, uniformBuffersMapped, camera, gameObjects, gameObjectCount);
 
     VkSubmitInfo submitInfo = {0};
     submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;

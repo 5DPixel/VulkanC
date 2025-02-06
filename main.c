@@ -67,7 +67,9 @@ int main()
     GameObject cube;
     GameObject* objects;
 
-    createGameObjects(&objects, 64);
+    srand(time(NULL));
+
+    createGameObjects(&objects, 64, rand());
 
     Vertex *vertices;
     uint32_t vertexCount;
@@ -168,15 +170,28 @@ int main()
             camera.center = subtract(camera.center, scale(up, camera.speed));
         }
 
-        float targetFov = 70.0f;
-        if (glfwGetKey(window, GLFW_KEY_C)) {
-            targetFov = 10.0f;
+        if(glfwGetKey(window, GLFW_KEY_E)){
+            vec3 up = normalize(camera.up);
+            camera.eye = add(camera.eye, scale(up, camera.speed));
+            camera.center = add(camera.center, scale(up, camera.speed));
         }
 
-        if (targetFov == 10.0f) {
-            lerp_t += lerpSpeed * deltaTime; // Increase lerp_t towards 1
+        if(glfwGetKey(window, GLFW_KEY_Q)){
+            vec3 up = normalize(camera.up);
+            camera.eye = subtract(camera.eye, scale(up, camera.speed));
+            camera.center = subtract(camera.center, scale(up, camera.speed));
+        }
+
+
+        float targetFov = 70.0f;
+        if (glfwGetKey(window, GLFW_KEY_C)) {
+            targetFov = 1.0f;
+        }
+
+        if (targetFov == 1.0f) {
+            lerp_t += lerpSpeed * deltaTime;
         } else {
-            lerp_t -= lerpSpeed * deltaTime; // Decrease lerp_t towards 0
+            lerp_t -= lerpSpeed * deltaTime;
         }
 
         lerp_t = fmaxf(0.0f, fminf(1.0f, lerp_t));
@@ -207,16 +222,12 @@ int main()
 
         camera.center = add(camera.eye, direction);
 
-        // if(glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1)){
-        //     objects[rand() % 1025].position.z = 1000.0f;
-        // }
-
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     }
 
     vkDeviceWaitIdle(device);
 
-    cleanup(window, device, physicalDevice, instance, surface, swapChain, swapChainImageViews, imageCount, vertShaderModule, fragShaderModule, pipelineLayout, renderPass, graphicsPipeline, swapChainFrameBuffers, commandPool, imageAvailableSemaphores, renderFinishedSemaphores, inFlightFences, vertexBuffer, vertexBufferMemory, indexBuffer, indexBufferMemory, descriptorSetLayout, uniformBuffers, uniformBuffersMemory, descriptorPool, textureImage, textureImageMemory, textureImageView, textureSampler, depthImage, depthImageView, depthImageMemory);
+    cleanup(window, device, physicalDevice, instance, surface, swapChain, swapChainImageViews, imageCount, vertShaderModule, fragShaderModule, pipelineLayout, renderPass, graphicsPipeline, swapChainFrameBuffers, commandPool, imageAvailableSemaphores, renderFinishedSemaphores, inFlightFences, vertexBuffer, vertexBufferMemory, indexBuffer, indexBufferMemory, descriptorSetLayout, uniformBuffers, uniformBuffersMemory, descriptorPool, textureImage, textureImageMemory, textureImageView, textureSampler, depthImage, depthImageView, depthImageMemory, shaderStorageBuffers, shaderStorageBuffersMemory);
 
     return 0;
 }

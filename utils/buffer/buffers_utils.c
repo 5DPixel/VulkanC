@@ -287,10 +287,7 @@ void updateUniformBuffer(uint32_t currentImage, VkExtent2D swapChainExtent, void
 void updateShaderStorageBuffers(uint32_t currentImage, VkExtent2D swapChainExtent, void** shaderStorageBuffersMapped, GameObject* gameObjects, uint32_t gameObjectCount){
     ShaderStorageBufferObject ssbo = {0};
 
-    ssbo.modelMatrices = (mat4*)malloc(gameObjectCount * sizeof(mat4));
-
     for(uint32_t i = 0; i < gameObjectCount; i++){
-        ssbo.modelMatrices[i] = mat4Multiply(mat4Multiply(mat4Translate(mat4Identity(), gameObjects[i].position), mat4Scale(mat4Identity(), gameObjects[i].scale)), mat4RotateEuler(mat4Identity(), gameObjects[i].rotation));
         ssbo.modelMatrices[i] = mat4Multiply(mat4Multiply(mat4Translate(mat4Identity(), gameObjects[i].position), mat4Scale(mat4Identity(), gameObjects[i].scale)), mat4RotateEuler(mat4Identity(), gameObjects[i].rotation));
     }
 
@@ -304,7 +301,7 @@ void createDescriptorPool(VkDevice device, VkDescriptorPool* descriptorPool){
 
     poolSizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
     poolSizes[1].descriptorCount = (uint32_t)MAX_FRAMES_IN_FLIGHT;
-    
+
     poolSizes[2].type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
     poolSizes[2].descriptorCount = (uint32_t)MAX_FRAMES_IN_FLIGHT;
 

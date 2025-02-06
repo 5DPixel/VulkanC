@@ -70,6 +70,10 @@ float easeInOutSine(float t) {
     return -0.5f * (cosf(PI * t) - 1.0f);
 }
 
+float smoothInterpolate(float x, float y, float s){
+    return lerp(x, y, s * s * (3 - 2 * s));
+}
+
 //Matrix functions
 
 mat4 mat4Identity(){

@@ -33,6 +33,7 @@ float dot(vec3 a, vec3 b);
 float lerp(float start, float end, float t);
 float easeInOutQuad(float t);
 float easeInOutSine(float t);
+float smoothInterpolate(float x, float y, float s);
 
 //Matrix functions
 mat4 mat4Identity();

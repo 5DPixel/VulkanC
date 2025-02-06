@@ -21,6 +21,7 @@ add_executable(
     file/file_utils.c
     math/math_utils.c
     math/hash_map.c
+    math/noise.c
     utils/buffer/buffers_utils.c
     utils/constants_and_arrays/constants_and_arrays.c
     utils/device_and_surface/device_utils.c

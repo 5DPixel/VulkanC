@@ -2,6 +2,7 @@
 
 #include <vulkan/vulkan.h>
 #include <stdbool.h>
+#include <stdalign.h>
 #include "../../math/math_utils.h"
 
 #define INVALID_FAMILY_INDEX -1
@@ -27,7 +28,7 @@ typedef struct {
 } UniformBufferObject;
 
 typedef struct {
-    mat4* modelMatrices;
+    mat4 modelMatrices[4096];
 } ShaderStorageBufferObject;
 
 typedef struct {
