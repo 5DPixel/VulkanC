@@ -42,9 +42,15 @@ int main()
     VkDeviceMemory vertexBufferMemory;
     VkBuffer indexBuffer;
     VkDeviceMemory indexBufferMemory;
+
     VkBuffer *uniformBuffers;
     VkDeviceMemory *uniformBuffersMemory;
     void **uniformBuffersMapped;
+
+    VkBuffer *shaderStorageBuffers;
+    VkDeviceMemory *shaderStorageBuffersMemory;
+    void **shaderStorageBuffersMapped;
+
     VkDescriptorPool descriptorPool;
     VkDescriptorSet *descriptorSets;
     
@@ -99,8 +105,9 @@ int main()
     createVertexBuffer(vertices, vertexCount, &vertexBuffer, device, physicalDevice, &vertexBufferMemory, commandPool, graphicsQueue);
     createIndexBuffer(indices, indexCount, &indexBuffer, device, physicalDevice, &indexBufferMemory, commandPool, graphicsQueue);
     createUniformBuffers(&uniformBuffers, &uniformBuffersMemory, &uniformBuffersMapped, device, physicalDevice);
+    createShaderStorageBuffers(&shaderStorageBuffers, &shaderStorageBuffersMemory, &shaderStorageBuffersMapped, device, physicalDevice);
     createDescriptorPool(device, &descriptorPool);
-    createDescriptorSets(descriptorSetLayout, descriptorPool, &descriptorSets, device, uniformBuffers, textureSampler, textureImageView);
+    createDescriptorSets(descriptorSetLayout, descriptorPool, &descriptorSets, device, uniformBuffers, textureSampler, textureImageView, shaderStorageBuffers);
     createCommandBuffers(&commandBuffers, device, commandPool);
     createSyncObjects(device, &imageAvailableSemaphores, &renderFinishedSemaphores, &inFlightFences);
 
@@ -115,7 +122,7 @@ int main()
     while (!glfwWindowShouldClose(window))
     {
         glfwPollEvents();
-        drawFrame(device, inFlightFences, imageAvailableSemaphores, swapChain, commandBuffers, renderPass, swapChainFrameBuffers, swapChainExtent, graphicsPipeline, renderFinishedSemaphores, graphicsQueue, presentQueue, currentFrame, physicalDevice, surface, window, swapChainImages, swapChainImageFormat, imageCount, swapChainImageViews, vertexBuffer, indexBuffer, pipelineLayout, descriptorSets, uniformBuffersMapped, depthImageView, indexCount, &camera, objects, 4096);
+        drawFrame(device, inFlightFences, imageAvailableSemaphores, swapChain, commandBuffers, renderPass, swapChainFrameBuffers, swapChainExtent, graphicsPipeline, renderFinishedSemaphores, graphicsQueue, presentQueue, currentFrame, physicalDevice, surface, window, swapChainImages, swapChainImageFormat, imageCount, swapChainImageViews, vertexBuffer, indexBuffer, pipelineLayout, descriptorSets, uniformBuffersMapped, depthImageView, indexCount, &camera, objects, 4096, shaderStorageBuffersMapped);
 
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;

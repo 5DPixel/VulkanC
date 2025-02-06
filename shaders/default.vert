@@ -5,7 +5,7 @@ layout(std140, binding = 0) uniform UniformBufferObject {
     mat4 projection;
 } ubo;
 
-layout(std430, binding = 2) buffer ModelMatrices {
+layout(std430, binding = 2) readonly buffer ModelMatrices {
     mat4 model[];
 };
 

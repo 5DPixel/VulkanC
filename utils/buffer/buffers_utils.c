@@ -261,29 +261,56 @@ void createUniformBuffers(VkBuffer** uniformBuffers, VkDeviceMemory** uniformBuf
     }
 }
 
+void createShaderStorageBuffers(VkBuffer** shaderStorageBuffers, VkDeviceMemory** shaderStorageBuffersMemory, void*** shaderStorageBuffersMapped, VkDevice device, VkPhysicalDevice physicalDevice){
+    VkDeviceSize bufferSize = sizeof(ShaderStorageBufferObject);
+
+    *shaderStorageBuffers = (VkBuffer*)malloc(MAX_FRAMES_IN_FLIGHT * sizeof(VkBuffer));
+    *shaderStorageBuffersMemory = (VkDeviceMemory*)malloc(MAX_FRAMES_IN_FLIGHT * sizeof(VkDeviceMemory));
+    *shaderStorageBuffersMapped = (void**)malloc(MAX_FRAMES_IN_FLIGHT * sizeof(void*));
+
+    for(size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++){
+        createBuffer(bufferSize, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, &(*shaderStorageBuffers)[i], &(*shaderStorageBuffersMemory)[i], device, physicalDevice);
+
+        vkMapMemory(device, (*shaderStorageBuffersMemory)[i], 0, bufferSize, 0, &(*shaderStorageBuffersMapped)[i]);
+    }
+}
+
 void updateUniformBuffer(uint32_t currentImage, VkExtent2D swapChainExtent, void** uniformBuffersMapped, Camera* camera, GameObject* gameObjects, uint32_t gameObjectCount) {
     UniformBufferObject ubo = {0};
-
-    for(uint32_t i = 0; i < gameObjectCount; i++){
-        ubo.modelMatrices[i] = mat4Multiply(mat4Multiply(mat4Translate(mat4Identity(), gameObjects[i].position), mat4Scale(mat4Identity(), gameObjects[i].scale)), mat4RotateEuler(mat4Identity(), gameObjects[i].rotation));
-        //ubo.modelMatrices[i] = mat4Multiply(mat4Multiply(mat4Translate(mat4Identity(), gameObjects[i].position), mat4Scale(mat4Identity(), gameObjects[i].scale)), mat4RotateEuler(mat4Identity(), gameObjects[i].rotation));
-    }
+    
     ubo.view = mat4LookAt(camera->eye, camera->center, camera->up);
     ubo.projection = mat4Perspective(deg2Rad(camera->fov), swapChainExtent.width / (float)swapChainExtent.height, camera->nearClippingPlane, camera->farClippingPlane);
     
     memcpy(uniformBuffersMapped[currentImage], &ubo, sizeof(ubo));
 }
 
+void updateShaderStorageBuffers(uint32_t currentImage, VkExtent2D swapChainExtent, void** shaderStorageBuffersMapped, GameObject* gameObjects, uint32_t gameObjectCount){
+    ShaderStorageBufferObject ssbo = {0};
+
+    ssbo.modelMatrices = (mat4*)malloc(gameObjectCount * sizeof(mat4));
+
+    for(uint32_t i = 0; i < gameObjectCount; i++){
+        ssbo.modelMatrices[i] = mat4Multiply(mat4Multiply(mat4Translate(mat4Identity(), gameObjects[i].position), mat4Scale(mat4Identity(), gameObjects[i].scale)), mat4RotateEuler(mat4Identity(), gameObjects[i].rotation));
+        ssbo.modelMatrices[i] = mat4Multiply(mat4Multiply(mat4Translate(mat4Identity(), gameObjects[i].position), mat4Scale(mat4Identity(), gameObjects[i].scale)), mat4RotateEuler(mat4Identity(), gameObjects[i].rotation));
+    }
+
+    memcpy(shaderStorageBuffersMapped[currentImage], &ssbo, sizeof(ssbo));
+}
+
 void createDescriptorPool(VkDevice device, VkDescriptorPool* descriptorPool){
-    VkDescriptorPoolSize poolSizes[2] = {0};
+    VkDescriptorPoolSize poolSizes[3] = {0};
     poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
     poolSizes[0].descriptorCount = (uint32_t)MAX_FRAMES_IN_FLIGHT;
+
     poolSizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
     poolSizes[1].descriptorCount = (uint32_t)MAX_FRAMES_IN_FLIGHT;
+    
+    poolSizes[2].type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+    poolSizes[2].descriptorCount = (uint32_t)MAX_FRAMES_IN_FLIGHT;
 
     VkDescriptorPoolCreateInfo poolInfo = {0};
     poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-    poolInfo.poolSizeCount = 2;
+    poolInfo.poolSizeCount = 3;
     poolInfo.pPoolSizes = poolSizes;
     poolInfo.maxSets = (uint32_t)MAX_FRAMES_IN_FLIGHT;
 
@@ -292,7 +319,7 @@ void createDescriptorPool(VkDevice device, VkDescriptorPool* descriptorPool){
     }
 }
 
-void createDescriptorSets(VkDescriptorSetLayout descriptorSetLayout, VkDescriptorPool descriptorPool, VkDescriptorSet** descriptorSets, VkDevice device, VkBuffer* uniformBuffers, VkSampler textureSampler, VkImageView textureImageView){
+void createDescriptorSets(VkDescriptorSetLayout descriptorSetLayout, VkDescriptorPool descriptorPool, VkDescriptorSet** descriptorSets, VkDevice device, VkBuffer* uniformBuffers, VkSampler textureSampler, VkImageView textureImageView, VkBuffer* shaderStorageBuffers){
     VkDescriptorSetLayout layouts[MAX_FRAMES_IN_FLIGHT];
     for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
         layouts[i] = descriptorSetLayout;
@@ -317,8 +344,9 @@ void createDescriptorSets(VkDescriptorSetLayout descriptorSetLayout, VkDescripto
         bufferInfo.range = sizeof(UniformBufferObject);
 
         VkDescriptorBufferInfo ssboInfo = {0};
-        //ssboInfo.buffer 
+        ssboInfo.buffer = shaderStorageBuffers[i];
         ssboInfo.offset = 0;
+        ssboInfo.range = sizeof(ShaderStorageBufferObject);
 
         VkDescriptorImageInfo imageInfo = {0};
         imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
@@ -349,9 +377,9 @@ void createDescriptorSets(VkDescriptorSetLayout descriptorSetLayout, VkDescripto
         descriptorWrites[2].dstArrayElement = 0;
         descriptorWrites[2].descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
         descriptorWrites[2].descriptorCount = 1;
-        //descriptorWrites[2].pBufferInfo = 
+        descriptorWrites[2].pBufferInfo = &ssboInfo;
 
-        vkUpdateDescriptorSets(device, 2, descriptorWrites, 0, NULL);
+        vkUpdateDescriptorSets(device, 3, descriptorWrites, 0, NULL);
     }
 }
 
