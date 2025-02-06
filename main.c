@@ -3,6 +3,7 @@
 #include "utils/utils.h"
 #include "game/game_logic.h"
 #include <stdlib.h>
+#include <time.h>
 
 #define WIDTH 1280
 #define HEIGHT 720
@@ -60,7 +61,7 @@ int main()
     GameObject cube;
     GameObject* objects;
 
-    createGameObjects(&objects, 4);
+    createGameObjects(&objects, 64);
 
     Vertex *vertices;
     uint32_t vertexCount;
@@ -72,8 +73,8 @@ int main()
     camera.center = (vec3){0.0f, 0.0f, 0.0f};
     camera.fov = 70.0f;
     camera.nearClippingPlane = 0.1f;
-    camera.farClippingPlane = 10.0f;
-    camera.speed = 0.05f;
+    camera.farClippingPlane = 1000.0f;
+    camera.speed = 0.1f;
     camera.sensitivity = 0.1f;
 
     initWindow(&window, WIDTH, HEIGHT, WINDOW_NAME);
@@ -105,11 +106,20 @@ int main()
 
     double lastX = 0, lastY = 0;
     float yaw = -90.0f, pitch = 0.0f;
+    float lastFrame = 0.0f, deltaTime = 0.0f;
+    float lerpSpeed = 8.0f;
+    float lerp_t = 0.0f;
+
+    srand(time(NULL));
 
     while (!glfwWindowShouldClose(window))
     {
         glfwPollEvents();
-        drawFrame(device, inFlightFences, imageAvailableSemaphores, swapChain, commandBuffers, renderPass, swapChainFrameBuffers, swapChainExtent, graphicsPipeline, renderFinishedSemaphores, graphicsQueue, presentQueue, currentFrame, physicalDevice, surface, window, swapChainImages, swapChainImageFormat, imageCount, swapChainImageViews, vertexBuffer, indexBuffer, pipelineLayout, descriptorSets, uniformBuffersMapped, depthImageView, indexCount, &camera, objects, 16);
+        drawFrame(device, inFlightFences, imageAvailableSemaphores, swapChain, commandBuffers, renderPass, swapChainFrameBuffers, swapChainExtent, graphicsPipeline, renderFinishedSemaphores, graphicsQueue, presentQueue, currentFrame, physicalDevice, surface, window, swapChainImages, swapChainImageFormat, imageCount, swapChainImageViews, vertexBuffer, indexBuffer, pipelineLayout, descriptorSets, uniformBuffersMapped, depthImageView, indexCount, &camera, objects, 4096);
+
+        float currentFrame = glfwGetTime();
+        deltaTime = currentFrame - lastFrame;
+        lastFrame = currentFrame;
 
         if(glfwGetKey(window, GLFW_KEY_W)){
             vec3 direction = normalize(subtract(camera.center, camera.eye));
@@ -139,17 +149,33 @@ int main()
             camera.center = add(camera.center, scale(right, camera.speed));
         }
 
-        if(glfwGetKey(window, GLFW_KEY_E)){
+        if(glfwGetKey(window, GLFW_KEY_SPACE)){
             vec3 up = normalize(camera.up);
             camera.eye = add(camera.eye, scale(up, camera.speed));
             camera.center = add(camera.center, scale(up, camera.speed));
         }
 
-        if(glfwGetKey(window, GLFW_KEY_Q)){
+        if(glfwGetKey(window, GLFW_KEY_LEFT_SHIFT)){
             vec3 up = normalize(camera.up);
             camera.eye = subtract(camera.eye, scale(up, camera.speed));
             camera.center = subtract(camera.center, scale(up, camera.speed));
         }
+
+        float targetFov = 70.0f;
+        if (glfwGetKey(window, GLFW_KEY_C)) {
+            targetFov = 10.0f;
+        }
+
+        if (targetFov == 10.0f) {
+            lerp_t += lerpSpeed * deltaTime; // Increase lerp_t towards 1
+        } else {
+            lerp_t -= lerpSpeed * deltaTime; // Decrease lerp_t towards 0
+        }
+
+        lerp_t = fmaxf(0.0f, fminf(1.0f, lerp_t));
+        float eased_t = easeInOutSine(lerp_t);
+
+        camera.fov = lerp(70.0f, 30.0f, eased_t);
 
         double xPos, yPos;
         glfwGetCursorPos(window, &xPos, &yPos);
@@ -173,6 +199,10 @@ int main()
         direction = normalize(direction);
 
         camera.center = add(camera.eye, direction);
+
+        // if(glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1)){
+        //     objects[rand() % 1025].position.z = 1000.0f;
+        // }
 
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     }

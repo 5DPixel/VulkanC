@@ -30,6 +30,9 @@ vec3 add(vec3 a, vec3 b);
 vec3 subtract(vec3 a, vec3 b);
 vec3 scale(vec3 vector, float scalar);
 float dot(vec3 a, vec3 b);
+float lerp(float start, float end, float t);
+float easeInOutQuad(float t);
+float easeInOutSine(float t);
 
 //Matrix functions
 mat4 mat4Identity();

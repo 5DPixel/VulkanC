@@ -58,6 +58,18 @@ float dot(vec3 a, vec3 b){
     return a.x * b.x + a.y * b.y + a.z * b.z;
 }
 
+float lerp(float start, float end, float t) {
+    return start + t * (end - start);
+}
+
+float easeInOutQuad(float t) {
+    return t < 0.5f ? 2 * t * t : -1 + (4 - 2 * t) * t;
+}
+
+float easeInOutSine(float t) {
+    return -0.5f * (cosf(PI * t) - 1.0f);
+}
+
 //Matrix functions
 
 mat4 mat4Identity(){
