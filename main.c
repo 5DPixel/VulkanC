@@ -70,7 +70,10 @@ int main()
 
     srand(time(NULL));
 
-    createGameObjects(&objects, 64, rand());
+    //createGameObjects(&objects, 64, rand());
+    //writeVFCFile("C:/Users/judet/OneDrive/Desktop/testworld/world/resources/0.vfc", objects, 4096);
+    uint32_t gameObjectCount;
+    loadVFCFile("C:/Users/judet/OneDrive/Desktop/testworld/world/resources/0.vfc", &objects, &gameObjectCount);
 
     Vertex *vertices;
     uint32_t vertexCount;
@@ -85,8 +88,6 @@ int main()
     camera.farClippingPlane = 1000.0f;
     camera.speed = 0.1f;
     camera.sensitivity = 0.1f;
-
-    writeVFCFile("C:/Users/judet/OneDrive/Desktop/testworld/world/test.vfc", objects, 4096);
 
     initWindow(&window, WIDTH, HEIGHT, WINDOW_NAME);
 

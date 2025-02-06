@@ -26,7 +26,28 @@ void writeVFCFile(const char *fileName, GameObject* gameObjects, uint32_t gameOb
     fclose(file);
 }
 
-void loadVFCFile(const char *fileName, GameObject** gameObjects, uint32_t gameObjectCount){
+void loadVFCFile(const char *fileName, GameObject** gameObjects, uint32_t* gameObjectCount){
     FILE *file;
     errno_t errorCode;
+
+    errorCode = fopen_s(&file, fileName, "rb");
+    if(errorCode != 0){
+        fprintf(stderr, "failed to open VFC file!\n");
+    }
+
+    VFCHeader header;
+    fread(&header, sizeof(VFCHeader), 1, file);
+
+    if(header.vfcMagicByte[0] != 'V' || header.vfcMagicByte[1] != 'F' || header.vfcMagicByte[2] != 'C' || header.vfcMagicByte[3] != '\0'){
+        fprintf(stderr, "invalid VFC file: magic byte mismatch\n");
+        fclose(file);
+        return;
+    }
+
+    *gameObjectCount = header.vfcGameObjectCount;
+    *gameObjects = (GameObject*)malloc(sizeof(GameObject) * (*gameObjectCount));
+    
+    fread(*gameObjects, sizeof(GameObject), *gameObjectCount, file);
+
+    fclose(file);
 }
