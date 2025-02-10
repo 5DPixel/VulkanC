@@ -68,17 +68,15 @@ int main()
     GameObject cube;
     GameObject* objects;
 
-    int createWorld = 0;
-    char* worldFilePath = "C:/Users/judet/OneDrive/Desktop/testworld/world/resources/0.vfc";
+    int createWorld = 1;
 
     srand(time(NULL));
 
     if(createWorld){
-        createGameObjects(&objects, 64, rand());
-        writeVFCFile(worldFilePath, objects, 4096);
+        //createGameObjects(&objects, 3, rand(), "../sample/world/resources");
+        loadGameObjects(&objects, 3, rand(), "../sample/world/resources");
     } else {
         uint32_t gameObjectCount;
-        loadVFCFile(worldFilePath, &objects, &gameObjectCount);
     }
 
     Vertex *vertices;
@@ -132,7 +130,7 @@ int main()
     while (!glfwWindowShouldClose(window))
     {
         glfwPollEvents();
-        drawFrame(device, inFlightFences, imageAvailableSemaphores, swapChain, commandBuffers, renderPass, swapChainFrameBuffers, swapChainExtent, graphicsPipeline, renderFinishedSemaphores, graphicsQueue, presentQueue, currentFrame, physicalDevice, surface, window, swapChainImages, swapChainImageFormat, imageCount, swapChainImageViews, vertexBuffer, indexBuffer, pipelineLayout, descriptorSets, uniformBuffersMapped, depthImageView, indexCount, &camera, objects, 4096, shaderStorageBuffersMapped);
+        drawFrame(device, inFlightFences, imageAvailableSemaphores, swapChain, commandBuffers, renderPass, swapChainFrameBuffers, swapChainExtent, graphicsPipeline, renderFinishedSemaphores, graphicsQueue, presentQueue, currentFrame, physicalDevice, surface, window, swapChainImages, swapChainImageFormat, imageCount, swapChainImageViews, vertexBuffer, indexBuffer, pipelineLayout, descriptorSets, uniformBuffersMapped, depthImageView, indexCount, &camera, objects, 2304, shaderStorageBuffersMapped);
 
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
