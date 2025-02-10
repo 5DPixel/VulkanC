@@ -61,17 +61,36 @@ void createGameObjects(GameObject** objects, uint32_t chunks, long seed, const c
 }
 
 void loadGameObjects(GameObject** objects, uint32_t chunks, long seed, const char* regionDirectory) {
-    char vfmFileName[40];
-    sprintf(vfmFileName, "%s/.vfm", regionDirectory);
+    char vfmFileName[150];
+    char levelNameFileName[150];
+
+    sprintf(levelNameFileName, "%s/db/levelname.txt", regionDirectory);
+    sprintf(vfmFileName, "%s/regions/regions.vfm", regionDirectory);
+
     uint32_t regionCount;
     
     FILE *vfmFile;
+    FILE *levelNameFile;
 
     char** regions = loadVFMFile(vfmFileName, &regionCount);
 
     if(fopen_s(&vfmFile, vfmFileName, "r") != 0){
         fprintf(stderr, "failed to open vfm file!");
     }
+
+    if (fopen_s(&levelNameFile, levelNameFileName, "r") != 0) {
+        printf("failed to open levelname file!\n");
+    }
+
+    char levelName[32];
+
+    if (fgets(levelName, sizeof(levelName), levelNameFile) != NULL) {
+        printf("Opened World: %s\n", levelName);
+    } else {
+        printf("error reading file or file is empty\n");
+    }
+
+    fclose(levelNameFile);
 
     uint32_t lineCount = 0;
     char buffer[32];

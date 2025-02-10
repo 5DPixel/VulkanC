@@ -3,7 +3,7 @@
 #define MINIZ_IMPL
 #include "../zlib/miniz.h"
 
-#define MAX_GAME_OBJECTS 4096
+#define MAX_GAME_OBJECTS 9216
 
 void writeVFCRegion(const char *regionDirectory, GameObject* gameObjects, uint32_t gameObjectCount, vec2 regionPosition){
     FILE *file;
@@ -15,9 +15,9 @@ void writeVFCRegion(const char *regionDirectory, GameObject* gameObjects, uint32
     itoa(regionPosition.x, x, 10);
     itoa(regionPosition.y, y, 10);
 
-    char fileName[40];
+    char fileName[150];
 
-    sprintf(fileName, "%s/r-%s-%s.vfc", regionDirectory, x, y);
+    sprintf(fileName, "%s/regions/r-%s-%s.vfc", regionDirectory, x, y);
 
     errorCode = fopen_s(&file, fileName, "wb");
     if(errorCode != 0){
@@ -46,7 +46,7 @@ void writeVFCRegion(const char *regionDirectory, GameObject* gameObjects, uint32
 
     VFCHeader header = {
         .vfcMagicByte = "VFC\x00",
-        .vfcVersion = 1,
+        .vfcVersion = CURRENT_VFC_VERSION,
         .vfcFlags = 0,
         .vfcGameObjectCount = gameObjectCount,
         .vfcCompressedSize = compressedSize,
@@ -61,9 +61,9 @@ void writeVFCRegion(const char *regionDirectory, GameObject* gameObjects, uint32
 
     FILE *vfmFile;
 
-    char vfmFileName[40];
+    char vfmFileName[150];
     errno_t vfmFileErrorCode;
-    sprintf(vfmFileName, "%s/.vfm", regionDirectory);
+    sprintf(vfmFileName, "%s/regions/regions.vfm", regionDirectory);
 
     vfmFileErrorCode = fopen_s(&vfmFile, vfmFileName, "a");
     if(vfmFileErrorCode != 0){
@@ -89,9 +89,9 @@ void loadVFCRegion(const char *regionDirectory, vec2 regionPosition, GameObject*
     itoa(regionPosition.x, x, 10);
     itoa(regionPosition.y, y, 10);
 
-    char fullFileName[40];
+    char fullFileName[150];
 
-    sprintf(fullFileName, "%s/r-%s-%s.vfc", regionDirectory, x, y);
+    sprintf(fullFileName, "%s/regions/r-%s-%s.vfc", regionDirectory, x, y);
 
     errorCode = fopen_s(&file, fullFileName, "rb");
     if(errorCode != 0){
@@ -150,7 +150,7 @@ char** loadVFMFile(const char* vfmFileName, uint32_t *outRegionCount){
     FILE *vfmFile;
     fopen_s(&vfmFile, vfmFileName, "r");
     if (!vfmFile) {
-        fprintf(stderr, "Failed to open VFM file!\n");
+        fprintf(stderr, "failed to open VFM file!\n");
         return NULL;
     }
 
@@ -164,7 +164,7 @@ char** loadVFMFile(const char* vfmFileName, uint32_t *outRegionCount){
 
     char **regionFileNames = (char**)malloc(regionCount * sizeof(char*));
     if (!regionFileNames) {
-        fprintf(stderr, "Failed to allocate memory for region file names!\n");
+        fprintf(stderr, "failed to allocate memory for region file names!\n");
         fclose(vfmFile);
         return NULL;
     }
@@ -173,7 +173,6 @@ char** loadVFMFile(const char* vfmFileName, uint32_t *outRegionCount){
     while (fgets(buffer, sizeof(buffer), vfmFile)) {
         buffer[strcspn(buffer, "\n")] = '\0';
 
-        // Allocate memory for each file name
         regionFileNames[index] = (char*)malloc(strlen(buffer) + 1);
         if (!regionFileNames[index]) {
             fprintf(stderr, "failed to allocate memory for file name!\n");

@@ -3,6 +3,8 @@
 #include "utils/utils.h"
 #include "vfc/vfc_loader.h"
 #include "game/game_logic.h"
+#include "math/encode/encode.h"
+#include "hexdb/hexdb_loader.h"
 #include <stdlib.h>
 #include <time.h>
 
@@ -68,13 +70,41 @@ int main()
     GameObject cube;
     GameObject* objects;
 
-    int createWorld = 1;
-
     srand(time(NULL));
 
+    int createWorld = 1;
+    uint8_t* bytes = generateRandomBytes(16);
+    char* encoded = base64Encode(bytes, 16);
+    char fileName[150];
+
+    sprintf(fileName, "../sample/%s", encoded);
+    //create_folder(fileName);
+
+    KeyValuePair pair;
+    strcpy(pair.key, "lastEpochSecondsPlayed");
+    pair.type = TYPE_UINT32;
+    pair.value.uValue = (uint32_t)time(NULL);
+
+    KeyValuePair pair2;
+    strcpy(pair2.key, "lastVersionPlayed");
+    pair2.type = TYPE_UINT32;
+    pair2.value.uValue = (uint32_t)MAKE_VERSION(1, 0, 0);
+
+    KeyValuePair keyValues[] = { pair, pair2 };
+
+    printf("Version: %u\n", keyValues[1].value.uValue);
+    
+    KeyValuePair* keyValuePairs;
+    
+    //writeHexDBDatabase("../sample/OPYXMoHa0o2JthnEqxN2BA==/resources/db/worlddata.hdb", keyValues, 2);
+    loadHexDBDatabase("../sample/OPYXMoHa0o2JthnEqxN2BA==/resources/db/worlddata.hdb", &keyValuePairs, 2);
+
+    printf("Last epoch seconds played: %u\n", keyValuePairs[0].value.uValue);
+
     if(createWorld){
-        //createGameObjects(&objects, 3, rand(), "../sample/world/resources");
-        loadGameObjects(&objects, 3, rand(), "../sample/world/resources");
+        //createGameObjects(&objects, 6, rand(), "../sample/OPYXMoHa0o2JthnEqxN2BA==/resources");
+        //create_folder("../sample/OPYXMoHa0o2JthnEqxN2BA==/test");
+        loadGameObjects(&objects, 6, rand(), "../sample/OPYXMoHa0o2JthnEqxN2BA==/resources");
     } else {
         uint32_t gameObjectCount;
     }
@@ -130,7 +160,7 @@ int main()
     while (!glfwWindowShouldClose(window))
     {
         glfwPollEvents();
-        drawFrame(device, inFlightFences, imageAvailableSemaphores, swapChain, commandBuffers, renderPass, swapChainFrameBuffers, swapChainExtent, graphicsPipeline, renderFinishedSemaphores, graphicsQueue, presentQueue, currentFrame, physicalDevice, surface, window, swapChainImages, swapChainImageFormat, imageCount, swapChainImageViews, vertexBuffer, indexBuffer, pipelineLayout, descriptorSets, uniformBuffersMapped, depthImageView, indexCount, &camera, objects, 2304, shaderStorageBuffersMapped);
+        drawFrame(device, inFlightFences, imageAvailableSemaphores, swapChain, commandBuffers, renderPass, swapChainFrameBuffers, swapChainExtent, graphicsPipeline, renderFinishedSemaphores, graphicsQueue, presentQueue, currentFrame, physicalDevice, surface, window, swapChainImages, swapChainImageFormat, imageCount, swapChainImageViews, vertexBuffer, indexBuffer, pipelineLayout, descriptorSets, uniformBuffersMapped, depthImageView, indexCount, &camera, objects, 9216, shaderStorageBuffersMapped);
 
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
@@ -238,7 +268,7 @@ int main()
 
         camera.center = add(camera.eye, direction);
 
-        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        //glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     }
 
     vkDeviceWaitIdle(device);

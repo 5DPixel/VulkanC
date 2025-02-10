@@ -8,6 +8,8 @@
 #define INVALID_FAMILY_INDEX -1
 #define MAX_FRAMES_IN_FLIGHT 2
 
+#define MAKE_VERSION(major, minor, patch) (((major) << 16) | ((minor) << 8) | (patch))
+
 //STRUCT
 typedef struct QueueFamilyIndices {
     uint32_t graphicsFamily;
@@ -28,7 +30,7 @@ typedef struct {
 } UniformBufferObject;
 
 typedef struct {
-    mat4 modelMatrices[4096];
+    mat4 modelMatrices[9216];
 } ShaderStorageBufferObject;
 
 typedef struct {

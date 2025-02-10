@@ -22,6 +22,7 @@ add_executable(
     math/math_utils.c
     math/hash_map.c
     math/noise.c
+    math/encode/encode.c
     utils/buffer/buffers_utils.c
     utils/constants_and_arrays/constants_and_arrays.c
     utils/device_and_surface/device_utils.c
@@ -35,5 +36,7 @@ add_executable(
     game/game_logic.c
     zlib/miniz.h
     vfc/vfc_loader.c
+    world/save_world.c
+    hexdb/hexdb_loader.c
 )
 target_link_libraries(VulkanApp ${VULKAN_SDK}/lib/vulkan-1.lib ${GLFW_PATH}/lib-vc2022/glfw3.lib)
