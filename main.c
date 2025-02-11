@@ -5,6 +5,7 @@
 #include "game/game_logic.h"
 #include "math/encode/encode.h"
 #include "hexdb/hexdb_loader.h"
+#include "world/save_world.h"
 #include <stdlib.h>
 #include <time.h>
 
@@ -67,18 +68,18 @@ int main()
     VkImageView depthImageView;
     Camera camera;
 
+    VkSampler depthSampler;
+
     GameObject cube;
     GameObject* objects;
 
+    char* levelFolder = "gg8e+r4f4hOD1+Drx+pN8QAA";
+    char hexDBPath[150];
+    char levelPath[150];
+
     srand(time(NULL));
 
-    int createWorld = 1;
-    uint8_t* bytes = generateRandomBytes(16);
-    char* encoded = base64Encode(bytes, 16);
-    char fileName[150];
-
-    sprintf(fileName, "../sample/%s", encoded);
-    //create_folder(fileName);
+    int createMode = 1;
 
     KeyValuePair pair;
     strcpy(pair.key, "lastEpochSecondsPlayed");
@@ -93,18 +94,23 @@ int main()
     KeyValuePair keyValues[] = { pair, pair2 };
 
     printf("Version: %u\n", keyValues[1].value.uValue);
+
+    sprintf(hexDBPath, "../sample/%s/resources/db/worlddata.hdb", levelFolder);
+    sprintf(levelPath, "../sample/%s/resources", levelFolder);
     
     KeyValuePair* keyValuePairs;
+
+    //createWorld("../sample", "helloworld");
     
-    //writeHexDBDatabase("../sample/OPYXMoHa0o2JthnEqxN2BA==/resources/db/worlddata.hdb", keyValues, 2);
-    loadHexDBDatabase("../sample/OPYXMoHa0o2JthnEqxN2BA==/resources/db/worlddata.hdb", &keyValuePairs, 2);
+    writeHexDBDatabase(hexDBPath, keyValues, 2);
+    loadHexDBDatabase(hexDBPath, &keyValuePairs, 2);
 
     printf("Last epoch seconds played: %u\n", keyValuePairs[0].value.uValue);
 
-    if(createWorld){
-        //createGameObjects(&objects, 6, rand(), "../sample/OPYXMoHa0o2JthnEqxN2BA==/resources");
+    if(createMode){
+        //createGameObjects(&objects, 6, rand(), levelPath);
         //create_folder("../sample/OPYXMoHa0o2JthnEqxN2BA==/test");
-        loadGameObjects(&objects, 6, rand(), "../sample/OPYXMoHa0o2JthnEqxN2BA==/resources");
+        loadGameObjects(&objects, 6, rand(), levelPath);
     } else {
         uint32_t gameObjectCount;
     }
@@ -141,6 +147,7 @@ int main()
     createTextureImage(device, physicalDevice, &textureImage, &textureImageMemory, commandPool, graphicsQueue, &mipLevels, VK_FORMAT_R8G8B8A8_SRGB);
     createTextureImageView(textureImage, &textureImageView, device, mipLevels);
     createTextureSampler(physicalDevice, &textureSampler, device, mipLevels);
+    createDepthSampler(physicalDevice, &depthSampler, device);
     loadModel(&vertices, &vertexCount, &indices, &indexCount);
     createVertexBuffer(vertices, vertexCount, &vertexBuffer, device, physicalDevice, &vertexBufferMemory, commandPool, graphicsQueue);
     createIndexBuffer(indices, indexCount, &indexBuffer, device, physicalDevice, &indexBufferMemory, commandPool, graphicsQueue);
@@ -268,7 +275,7 @@ int main()
 
         camera.center = add(camera.eye, direction);
 
-        //glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     }
 
     vkDeviceWaitIdle(device);

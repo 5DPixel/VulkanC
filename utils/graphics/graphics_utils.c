@@ -410,6 +410,35 @@ void createTextureSampler(VkPhysicalDevice physicalDevice, VkSampler* sampler, V
     }
 }
 
+void createDepthSampler(VkPhysicalDevice physicalDevice, VkSampler* sampler, VkDevice device){
+    VkSamplerCreateInfo samplerInfo = {0};
+    samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
+    samplerInfo.magFilter = VK_FILTER_NEAREST;
+    samplerInfo.minFilter = VK_FILTER_NEAREST;
+    samplerInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+    samplerInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+    samplerInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+
+    samplerInfo.anisotropyEnable = VK_FALSE;
+
+    samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_NEAREST; 
+    samplerInfo.minLod = 0.0f;
+    samplerInfo.maxLod = 0.0f;
+    samplerInfo.mipLodBias = 0.0f; // Optional
+
+    samplerInfo.compareEnable = VK_TRUE; 
+    samplerInfo.compareOp = VK_COMPARE_OP_LESS_OR_EQUAL;
+
+    samplerInfo.maxAnisotropy = 1.0f;
+
+    samplerInfo.borderColor = VK_BORDER_COLOR_FLOAT_OPAQUE_BLACK;
+    samplerInfo.unnormalizedCoordinates = VK_FALSE;
+
+    if(vkCreateSampler(device, &samplerInfo, NULL, sampler) != VK_SUCCESS){
+        fprintf(stderr, "failed to create texture sampler!");
+    }
+}
+
 VkFormat findSupportedFormat(VkFormat* candidates, uint32_t candidateAmount, VkImageTiling tiling, VkFormatFeatureFlags features, VkPhysicalDevice physicalDevice){
     for(uint32_t i = 0; i < candidateAmount; i++){
         VkFormatProperties properties;

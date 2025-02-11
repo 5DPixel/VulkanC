@@ -15,6 +15,7 @@ void createImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling
 void createTextureImage(VkDevice device, VkPhysicalDevice physicalDevice, VkImage* textureImage, VkDeviceMemory* textureImageMemory, VkCommandPool commandPool, VkQueue graphicsQueue, uint32_t* mipLevels, VkFormat imageFormat);
 void createTextureImageView(VkImage textureImage, VkImageView* textureImageView, VkDevice device, uint32_t mipLevels);
 void createTextureSampler(VkPhysicalDevice physicalDevice, VkSampler* sampler, VkDevice device, uint32_t mipLevels);
+void createDepthSampler(VkPhysicalDevice physicalDevice, VkSampler* sampler, VkDevice device)
 VkFormat findSupportedFormat(VkFormat* candidates, uint32_t candidateAmount, VkImageTiling tiling, VkFormatFeatureFlags features, VkPhysicalDevice physicalDevice);
 VkFormat findDepthFormat(VkPhysicalDevice physicalDevice);
 bool hasStencilComponent(VkFormat format);

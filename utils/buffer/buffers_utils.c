@@ -316,7 +316,7 @@ void createDescriptorPool(VkDevice device, VkDescriptorPool* descriptorPool){
     }
 }
 
-void createDescriptorSets(VkDescriptorSetLayout descriptorSetLayout, VkDescriptorPool descriptorPool, VkDescriptorSet** descriptorSets, VkDevice device, VkBuffer* uniformBuffers, VkSampler textureSampler, VkImageView textureImageView, VkBuffer* shaderStorageBuffers){
+void createDescriptorSets(VkDescriptorSetLayout descriptorSetLayout, VkDescriptorPool descriptorPool, VkDescriptorSet** descriptorSets, VkDevice device, VkBuffer* uniformBuffers, VkSampler textureSampler, VkImageView textureImageView, VkBuffer* shaderStorageBuffers, VkSampler depthSampler, VkImageView depthImageView){
     VkDescriptorSetLayout layouts[MAX_FRAMES_IN_FLIGHT];
     for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
         layouts[i] = descriptorSetLayout;
@@ -350,7 +350,12 @@ void createDescriptorSets(VkDescriptorSetLayout descriptorSetLayout, VkDescripto
         imageInfo.imageView = textureImageView;
         imageInfo.sampler = textureSampler;
 
-        VkWriteDescriptorSet descriptorWrites[3] = {0};
+        VkDescriptorImageInfo depthImageInfo = {0};
+        depthImageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+        depthImageInfo.imageView = depthImageView;
+        depthImageInfo.sampler = depthSampler;
+
+        VkWriteDescriptorSet descriptorWrites[4] = {0};
 
         descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
         descriptorWrites[0].dstSet = (*descriptorSets)[i];
@@ -376,7 +381,15 @@ void createDescriptorSets(VkDescriptorSetLayout descriptorSetLayout, VkDescripto
         descriptorWrites[2].descriptorCount = 1;
         descriptorWrites[2].pBufferInfo = &ssboInfo;
 
-        vkUpdateDescriptorSets(device, 3, descriptorWrites, 0, NULL);
+        descriptorWrites[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+        descriptorWrites[1].dstSet = (*descriptorSets)[i];
+        descriptorWrites[1].dstBinding = 1;
+        descriptorWrites[1].dstArrayElement = 0;
+        descriptorWrites[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+        descriptorWrites[1].descriptorCount = 1;
+        descriptorWrites[1].pImageInfo = &depthImageInfo;
+
+        vkUpdateDescriptorSets(device, 4, descriptorWrites, 0, NULL);
     }
 }
 
