@@ -50,6 +50,14 @@ vec3 cross(vec3 a, vec3 b){
     };
 }
 
+vec3 vec3Lerp(vec3 a, vec3 b, float ratio){
+    vec3 result;
+    result.x = a.x + (b.x - a.x) * ratio;
+    result.y = a.y + (b.y - a.y) * ratio;
+    result.z = a.z + (b.z - a.z) * ratio;
+    return result;
+}
+
 vec3 subtract(vec3 a, vec3 b){
     return (vec3){a.x - b.x, a.y - b.y, a.z - b.z};
 }

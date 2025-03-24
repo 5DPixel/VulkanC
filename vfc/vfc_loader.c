@@ -59,24 +59,14 @@ void writeVFCRegion(const char *regionDirectory, GameObject* gameObjects, uint32
 
     fclose(file);
 
-    FILE *vfmFile;
-
-    char vfmFileName[150];
-    errno_t vfmFileErrorCode;
-    sprintf(vfmFileName, "%s/regions/regions.vfm", regionDirectory);
-
-    vfmFileErrorCode = fopen_s(&vfmFile, vfmFileName, "a");
-    if(vfmFileErrorCode != 0){
-        fprintf(stderr, "failed to open vfm file!");
-        free(compressedData);
-        return;
-    }
-
-    fprintf(vfmFile, "r-%s-%s.vfc\n", x, y);
-
-    fclose(vfmFile);
-
     free(compressedData);
+}
+
+void writeVFMFile(const char *regionDirectory) {
+    char writeCommand[300];
+    sprintf(writeCommand, "pushd \"%s\\regions\" && dir /b > \"regions.vfm\" && popd", regionDirectory);
+
+    system(writeCommand);
 }
 
 void loadVFCRegion(const char *regionDirectory, vec2 regionPosition, GameObject** gameObjects, uint32_t* gameObjectCount, VFCHeader* outHeader){

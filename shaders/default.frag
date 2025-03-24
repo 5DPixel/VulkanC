@@ -8,10 +8,15 @@ layout(location = 2) in vec3 fragNormal;
 
 layout(location = 0) out vec4 outColor;
 
+layout(std140, binding = 2) readonly buffer ModelMatrices {
+    float ambient;
+    mat4 modelMatrices[];
+};
+
 void main() {
     vec3 lightDir = normalize(vec3(0.0, 0.5, 1.0));
     vec3 viewDir = normalize(vec3(0.0, 0.0, 1.0));
-    vec3 ambient = vec3(0.5);
+    vec3 ambient = vec3(ambient);
 
     vec3 normal = normalize(fragNormal);
 

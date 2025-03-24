@@ -70,6 +70,10 @@ int main()
     GameObject cube;
     GameObject* objects;
 
+    //vec3 skyClearColor = (vec3){0.52f, 0.80f, 0.92f};
+    vec3 skyClearColor = (vec3){0.0f, 0.0f, 0.0f};
+    int currentTick = 0;
+
     srand(time(NULL));
 
     int createWorld = 1;
@@ -78,7 +82,7 @@ int main()
     char fileName[150];
 
     sprintf(fileName, "../sample/%s", encoded);
-    //create_folder(fileName);
+    create_folder(fileName);
 
     KeyValuePair pair;
     strcpy(pair.key, "lastEpochSecondsPlayed");
@@ -159,8 +163,11 @@ int main()
 
     while (!glfwWindowShouldClose(window))
     {
+        skyClearColor = getSkyColor(currentTick);
+        currentTick += 5.0f; //I would use delta time here, but I really don't want to introduce extra things so just leave like this
+
         glfwPollEvents();
-        drawFrame(device, inFlightFences, imageAvailableSemaphores, swapChain, commandBuffers, renderPass, swapChainFrameBuffers, swapChainExtent, graphicsPipeline, renderFinishedSemaphores, graphicsQueue, presentQueue, currentFrame, physicalDevice, surface, window, swapChainImages, swapChainImageFormat, imageCount, swapChainImageViews, vertexBuffer, indexBuffer, pipelineLayout, descriptorSets, uniformBuffersMapped, depthImageView, indexCount, &camera, objects, 9216, shaderStorageBuffersMapped);
+        drawFrame(device, inFlightFences, imageAvailableSemaphores, swapChain, commandBuffers, renderPass, swapChainFrameBuffers, swapChainExtent, graphicsPipeline, renderFinishedSemaphores, graphicsQueue, presentQueue, currentFrame, physicalDevice, surface, window, swapChainImages, swapChainImageFormat, imageCount, swapChainImageViews, vertexBuffer, indexBuffer, pipelineLayout, descriptorSets, uniformBuffersMapped, depthImageView, indexCount, &camera, objects, 9216, shaderStorageBuffersMapped, skyClearColor);
 
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
@@ -268,7 +275,7 @@ int main()
 
         camera.center = add(camera.eye, direction);
 
-        //glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     }
 
     vkDeviceWaitIdle(device);

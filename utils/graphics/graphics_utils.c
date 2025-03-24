@@ -235,7 +235,7 @@ void createGraphicsPipeline(VkDevice* device, VkExtent2D swapChainExtent, VkPipe
     }
 }
 
-void drawFrame(VkDevice device, VkFence* inFlightFences, VkSemaphore* imageAvailableSemaphores, VkSwapchainKHR swapChain, VkCommandBuffer* commandBuffers, VkRenderPass renderPass, VkFramebuffer* swapChainFramebuffers, VkExtent2D swapChainExtent, VkPipeline graphicsPipeline, VkSemaphore* renderFinishedSemaphores, VkQueue graphicsQueue, VkQueue presentQueue, uint32_t currentFrame, VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, GLFWwindow* window, VkImage* swapChainImages, VkFormat swapChainImageFormat, uint32_t imageCount, VkImageView* swapChainImageViews, VkBuffer vertexBuffer, VkBuffer indexBuffer, VkPipelineLayout pipelineLayout, VkDescriptorSet* descriptorSets, void** uniformBuffersMapped, VkImageView depthImageView, uint32_t indexCount, Camera* camera, GameObject* gameObjects, uint32_t gameObjectCount, void **shaderStorageBuffersMapped){
+void drawFrame(VkDevice device, VkFence* inFlightFences, VkSemaphore* imageAvailableSemaphores, VkSwapchainKHR swapChain, VkCommandBuffer* commandBuffers, VkRenderPass renderPass, VkFramebuffer* swapChainFramebuffers, VkExtent2D swapChainExtent, VkPipeline graphicsPipeline, VkSemaphore* renderFinishedSemaphores, VkQueue graphicsQueue, VkQueue presentQueue, uint32_t currentFrame, VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, GLFWwindow* window, VkImage* swapChainImages, VkFormat swapChainImageFormat, uint32_t imageCount, VkImageView* swapChainImageViews, VkBuffer vertexBuffer, VkBuffer indexBuffer, VkPipelineLayout pipelineLayout, VkDescriptorSet* descriptorSets, void** uniformBuffersMapped, VkImageView depthImageView, uint32_t indexCount, Camera* camera, GameObject* gameObjects, uint32_t gameObjectCount, void **shaderStorageBuffersMapped, vec3 clearColor){
     vkWaitForFences(device, 1, &inFlightFences[currentFrame], VK_TRUE, UINT64_MAX);
     
     uint32_t imageIndex;
@@ -251,7 +251,7 @@ void drawFrame(VkDevice device, VkFence* inFlightFences, VkSemaphore* imageAvail
     vkResetFences(device, 1, &inFlightFences[currentFrame]);
 
     vkResetCommandBuffer(commandBuffers[currentFrame], 0);
-    recordCommandBuffer(commandBuffers[currentFrame], imageIndex, renderPass, swapChainFramebuffers, swapChainExtent, graphicsPipeline, vertexBuffer, indexBuffer, pipelineLayout, descriptorSets, currentFrame, indexCount, gameObjects, gameObjectCount);
+    recordCommandBuffer(commandBuffers[currentFrame], imageIndex, renderPass, swapChainFramebuffers, swapChainExtent, graphicsPipeline, vertexBuffer, indexBuffer, pipelineLayout, descriptorSets, currentFrame, indexCount, &gameObjects, gameObjectCount, clearColor);
 
     updateShaderStorageBuffers(currentFrame, swapChainExtent, shaderStorageBuffersMapped, gameObjects, gameObjectCount);
     updateUniformBuffer(currentFrame, swapChainExtent, uniformBuffersMapped, camera, gameObjects, gameObjectCount);

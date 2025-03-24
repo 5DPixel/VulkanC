@@ -30,6 +30,8 @@ typedef struct {
 } UniformBufferObject;
 
 typedef struct {
+    float ambient;
+    char padding[12];
     mat4 modelMatrices[9216];
 } ShaderStorageBufferObject;
 
@@ -61,6 +63,11 @@ typedef struct {
     vec3 rotation;
     vec3 scale;
 } GameObject;
+
+typedef struct {
+    int time;
+    vec3 value;
+} Keyframe;
 
 extern const char* validationLayers[1];
 extern const char* deviceExtensions[1];

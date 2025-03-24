@@ -26,7 +26,7 @@ void createCommandBuffers(VkCommandBuffer** commandBuffers, VkDevice device, VkC
     }
 }
 
-void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex, VkRenderPass renderPass, VkFramebuffer* swapChainFramebuffers, VkExtent2D swapChainExtent, VkPipeline graphicsPipeline, VkBuffer vertexBuffer, VkBuffer indexBuffer, VkPipelineLayout pipelineLayout, VkDescriptorSet* descriptorSets, uint32_t currentFrame, uint32_t indexCount, GameObject** gameObjects, uint32_t gameObjectCount){
+void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex, VkRenderPass renderPass, VkFramebuffer* swapChainFramebuffers, VkExtent2D swapChainExtent, VkPipeline graphicsPipeline, VkBuffer vertexBuffer, VkBuffer indexBuffer, VkPipelineLayout pipelineLayout, VkDescriptorSet* descriptorSets, uint32_t currentFrame, uint32_t indexCount, GameObject** gameObjects, uint32_t gameObjectCount, vec3 skyClearColor){
     VkCommandBufferBeginInfo beginInfo = {0};
     beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
     beginInfo.flags = 0; // Optional
@@ -45,7 +45,7 @@ void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex, VkR
     renderPassInfo.renderArea.extent = swapChainExtent;
 
     VkClearValue* clearValues = (VkClearValue*)malloc(2 * sizeof(VkClearValue));
-    VkClearColorValue clearColorValue = {{0.52f, 0.80f, 0.92f, 1.0f}};
+    VkClearColorValue clearColorValue = {{skyClearColor.x, skyClearColor.y, skyClearColor.z, 1.0f}};
     VkClearDepthStencilValue clearDepthStencilValue = {1.0f, 0};
 
     clearValues[0].color = clearColorValue;
@@ -229,7 +229,7 @@ void createDescriptorSetLayout(VkDevice device, VkDescriptorSetLayout* descripto
     ssboLayoutBinding.binding = 2;
     ssboLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
     ssboLayoutBinding.descriptorCount = 1;
-    ssboLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+    ssboLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
 
     VkDescriptorSetLayoutBinding bindings[3] = {
         uboLayoutBinding,
@@ -290,6 +290,7 @@ void updateShaderStorageBuffers(uint32_t currentImage, VkExtent2D swapChainExten
     for(uint32_t i = 0; i < gameObjectCount; i++){
         ssbo.modelMatrices[i] = mat4Multiply(mat4Multiply(mat4Translate(mat4Identity(), gameObjects[i].position), mat4Scale(mat4Identity(), gameObjects[i].scale)), mat4RotateEuler(mat4Identity(), gameObjects[i].rotation));
     }
+    ssbo.specular = 0.5f;
 
     memcpy(shaderStorageBuffersMapped[currentImage], &ssbo, sizeof(ssbo));
 }

@@ -6,7 +6,7 @@ void writeHexDBDatabase(const char* fileName, KeyValuePair* keyValues, uint32_t 
     FILE *file;
 
     if(fopen_s(&file, fileName, "wb") != 0){
-        fprintf(stderr, "failed to open hexdb file!\n");
+        fprintf(stderr, "failed to open hexdb file for writing!\n");
     }
 
     uint32_t uncompressedSize = sizeof(KeyValuePair) * keyValuePairCount;

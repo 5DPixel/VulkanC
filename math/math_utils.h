@@ -36,6 +36,7 @@ float easeInOutQuad(float t);
 float easeInOutSine(float t);
 float smoothInterpolate(float x, float y, float s);
 float distance(vec3 a, vec3 b);
+vec3 vec3Lerp(vec3 a, vec3 b, float ratio);
 int checkAABBIntersection(vec3 rayOrigin, vec3 rayDir, vec3 aabbMin, vec3 aabbMax);
 
 //Matrix functions

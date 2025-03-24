@@ -1,5 +1,15 @@
 #include "game_logic.h"
 
+Keyframe keyframes[] = {
+    {0, {255, 150, 100}},
+    {6000, {135, 206, 235}},
+    {12000, {255, 102, 102}},
+    {18000, {10, 10, 50}},
+    {24000, {255, 150, 100}}
+};
+
+#define NUM_KEYFRAMES (sizeof(keyframes) / sizeof(keyframes[0]))
+
 float generateTerrainHeight(float x, float y, long seed){
     float height = perlin2DOctaves(x, y, 0.1f, 1.0f, 64, seed);
 
@@ -58,6 +68,8 @@ void createGameObjects(GameObject** objects, uint32_t chunks, long seed, const c
             free(chunkObjects);
         }
     }
+
+    writeVFMFile(regionDirectory);
 }
 
 void loadGameObjects(GameObject** objects, uint32_t chunks, long seed, const char* regionDirectory) {
@@ -129,4 +141,19 @@ void loadGameObjects(GameObject** objects, uint32_t chunks, long seed, const cha
         }
     }
 }
+}
+
+vec3 getSkyColor(int tick){
+    tick = tick % 24000;
+
+    for(uint32_t i = 0; i < NUM_KEYFRAMES - 1; i++){
+        if(tick >= keyframes[i].time && tick < keyframes[i + 1].time){
+            float ratio = (float)(tick - keyframes[i].time) / (keyframes[i + 1].time - keyframes[i].time);
+            vec3 result = vec3Lerp(keyframes[i].value, keyframes[i + 1].value, ratio);
+            result = (vec3){result.x / 255.0f, result.y / 255.0f, result.z / 255.0f};
+            
+            return result;
+        }
+    }
+    return keyframes[0].value;
 }

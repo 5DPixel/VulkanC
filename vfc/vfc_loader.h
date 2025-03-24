@@ -20,4 +20,5 @@ typedef struct {
 
 void writeVFCRegion(const char *regionDirectory, GameObject* gameObjects, uint32_t gameObjectCount, vec2 regionPosition);
 void loadVFCRegion(const char *regionDirectory, vec2 regionPosition, GameObject** gameObjects, uint32_t* gameObjectCount, VFCHeader* outHeader);
+void writeVFMFile(const char *regionDirectory);
 char** loadVFMFile(const char* vfmFileName, uint32_t *outRegionCount);

@@ -6,6 +6,7 @@ layout(std140, binding = 0) uniform UniformBufferObject {
 } ubo;
 
 layout(std140, binding = 2) readonly buffer ModelMatrices {
+    float ambient;
     mat4 modelMatrices[];
 };
 
