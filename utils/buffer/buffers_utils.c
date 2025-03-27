@@ -284,13 +284,13 @@ void updateUniformBuffer(uint32_t currentImage, VkExtent2D swapChainExtent, void
     memcpy(uniformBuffersMapped[currentImage], &ubo, sizeof(ubo));
 }
 
-void updateShaderStorageBuffers(uint32_t currentImage, VkExtent2D swapChainExtent, void** shaderStorageBuffersMapped, GameObject* gameObjects, uint32_t gameObjectCount){
+void updateShaderStorageBuffers(uint32_t currentImage, VkExtent2D swapChainExtent, void** shaderStorageBuffersMapped, GameObject* gameObjects, uint32_t gameObjectCount, float ambient){
     ShaderStorageBufferObject ssbo = {0};
 
     for(uint32_t i = 0; i < gameObjectCount; i++){
         ssbo.modelMatrices[i] = mat4Multiply(mat4Multiply(mat4Translate(mat4Identity(), gameObjects[i].position), mat4Scale(mat4Identity(), gameObjects[i].scale)), mat4RotateEuler(mat4Identity(), gameObjects[i].rotation));
     }
-    ssbo.specular = 0.5f;
+    ssbo.ambient = ambient;
 
     memcpy(shaderStorageBuffersMapped[currentImage], &ssbo, sizeof(ssbo));
 }

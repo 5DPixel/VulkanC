@@ -20,7 +20,7 @@ void createDescriptorSetLayout(VkDevice device, VkDescriptorSetLayout* descripto
 void createUniformBuffers(VkBuffer** uniformBuffers, VkDeviceMemory** uniformBuffersMemory, void*** uniformBuffersMapped, VkDevice device, VkPhysicalDevice physicalDevice);
 void createShaderStorageBuffers(VkBuffer** shaderStorageBuffers, VkDeviceMemory** shaderStorageBuffersMemory, void*** shaderStorageBuffersMapped, VkDevice device, VkPhysicalDevice physicalDevice);
 void updateUniformBuffer(uint32_t currentImage, VkExtent2D swapChainExtent, void** uniformBuffersMapped, Camera* camera, GameObject* gameObjects, uint32_t gameObjectCount);
-void updateShaderStorageBuffers(uint32_t currentImage, VkExtent2D swapChainExtent, void** shaderStorageBuffersMapped, GameObject* gameObjects, uint32_t gameObjectCount);
+void updateShaderStorageBuffers(uint32_t currentImage, VkExtent2D swapChainExtent, void** shaderStorageBuffersMapped, GameObject* gameObjects, uint32_t gameObjectCount, float ambient);
 void createDescriptorPool(VkDevice device, VkDescriptorPool* descriptorPool);
 void createDescriptorSets(VkDescriptorSetLayout descriptorSetLayout, VkDescriptorPool descriptorPool, VkDescriptorSet** descriptorSets, VkDevice device, VkBuffer* uniformBuffers, VkSampler textureSampler, VkImageView textureImageView, VkBuffer* shaderStorageBuffers);
 VkCommandBuffer beginSingleTimeCommands(VkCommandPool commandPool, VkDevice device);

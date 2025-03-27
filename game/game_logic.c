@@ -1,6 +1,6 @@
 #include "game_logic.h"
 
-Keyframe keyframes[] = {
+Keyframe skyColors[] = {
     {0, {255, 150, 100}},
     {6000, {135, 206, 235}},
     {12000, {255, 102, 102}},
@@ -8,7 +8,16 @@ Keyframe keyframes[] = {
     {24000, {255, 150, 100}}
 };
 
-#define NUM_KEYFRAMES (sizeof(keyframes) / sizeof(keyframes[0]))
+FloatKeyframe skyAmbience[] = {
+    {0, 0.2f},
+    {6000, 1.0f},
+    {12000, 0.6f},
+    {18000, 0.1f},
+    {24000, 0.2f}
+};
+
+#define NUM_KEYFRAMES (sizeof(skyColors) / sizeof(skyColors[0]))
+#define NUM_AMBIENT_KEYFRAMES (sizeof(skyAmbience) / sizeof(skyAmbience[0]))
 
 float generateTerrainHeight(float x, float y, long seed){
     float height = perlin2DOctaves(x, y, 0.1f, 1.0f, 64, seed);
@@ -147,13 +156,27 @@ vec3 getSkyColor(int tick){
     tick = tick % 24000;
 
     for(uint32_t i = 0; i < NUM_KEYFRAMES - 1; i++){
-        if(tick >= keyframes[i].time && tick < keyframes[i + 1].time){
-            float ratio = (float)(tick - keyframes[i].time) / (keyframes[i + 1].time - keyframes[i].time);
-            vec3 result = vec3Lerp(keyframes[i].value, keyframes[i + 1].value, ratio);
+        if(tick >= skyColors[i].time && tick < skyColors[i + 1].time){
+            float ratio = (float)(tick - skyColors[i].time) / (skyColors[i + 1].time - skyColors[i].time);
+            vec3 result = vec3Lerp(skyColors[i].value, skyColors[i + 1].value, ratio);
             result = (vec3){result.x / 255.0f, result.y / 255.0f, result.z / 255.0f};
             
             return result;
         }
     }
-    return keyframes[0].value;
+    return skyColors[0].value;
+}
+
+float getSkyAmbient(int tick){
+    tick = tick % 24000;
+
+    for(uint32_t i = 0; i < NUM_AMBIENT_KEYFRAMES - 1; i++){
+        if(tick >= skyAmbience[i].time && tick < skyAmbience[i + 1].time){
+            float ratio = (float)(tick - skyAmbience[i].time) / (skyAmbience[i + 1].time - skyAmbience[i].time);
+            float result = lerp(skyAmbience[i].value, skyAmbience[i + 1].value, ratio);
+            
+            return result;
+        }
+    }
+    return skyAmbience[0].value;
 }

@@ -5,6 +5,7 @@
 #include "game/game_logic.h"
 #include "math/encode/encode.h"
 #include "hexdb/hexdb_loader.h"
+#include "world/save_world.h"
 #include <stdlib.h>
 #include <time.h>
 
@@ -70,8 +71,15 @@ int main()
     GameObject cube;
     GameObject* objects;
 
+    char* levelFolder = "gg8e+r4f4hOD1+Drx+pN8QAA";
+    char hexDBPath[150];
+    char levelPath[150];
+
+    int createMode = 1;
+
     //vec3 skyClearColor = (vec3){0.52f, 0.80f, 0.92f};
     vec3 skyClearColor = (vec3){0.0f, 0.0f, 0.0f};
+    float skyAmbient = 0.0f;
     int currentTick = 0;
 
     srand(time(NULL));
@@ -97,18 +105,23 @@ int main()
     KeyValuePair keyValues[] = { pair, pair2 };
 
     printf("Version: %u\n", keyValues[1].value.uValue);
+
+    sprintf(hexDBPath, "../sample/%s/resources/db/worlddata.hdb", levelFolder);
+    sprintf(levelPath, "../sample/%s/resources", levelFolder);
     
     KeyValuePair* keyValuePairs;
+
+    //createWorld("../sample", "helloworld");
     
-    //writeHexDBDatabase("../sample/OPYXMoHa0o2JthnEqxN2BA==/resources/db/worlddata.hdb", keyValues, 2);
-    loadHexDBDatabase("../sample/OPYXMoHa0o2JthnEqxN2BA==/resources/db/worlddata.hdb", &keyValuePairs, 2);
+    writeHexDBDatabase(hexDBPath, keyValues, 2);
+    loadHexDBDatabase(hexDBPath, &keyValuePairs, 2);
 
     printf("Last epoch seconds played: %u\n", keyValuePairs[0].value.uValue);
 
-    if(createWorld){
-        //createGameObjects(&objects, 6, rand(), "../sample/OPYXMoHa0o2JthnEqxN2BA==/resources");
+    if(createMode){
+        //createGameObjects(&objects, 6, rand(), levelPath);
         //create_folder("../sample/OPYXMoHa0o2JthnEqxN2BA==/test");
-        loadGameObjects(&objects, 6, rand(), "../sample/OPYXMoHa0o2JthnEqxN2BA==/resources");
+        loadGameObjects(&objects, 6, rand(), levelPath);
     } else {
         uint32_t gameObjectCount;
     }
@@ -164,14 +177,16 @@ int main()
     while (!glfwWindowShouldClose(window))
     {
         skyClearColor = getSkyColor(currentTick);
-        currentTick += 5.0f; //I would use delta time here, but I really don't want to introduce extra things so just leave like this
+        skyAmbient = getSkyAmbient(currentTick);
 
         glfwPollEvents();
-        drawFrame(device, inFlightFences, imageAvailableSemaphores, swapChain, commandBuffers, renderPass, swapChainFrameBuffers, swapChainExtent, graphicsPipeline, renderFinishedSemaphores, graphicsQueue, presentQueue, currentFrame, physicalDevice, surface, window, swapChainImages, swapChainImageFormat, imageCount, swapChainImageViews, vertexBuffer, indexBuffer, pipelineLayout, descriptorSets, uniformBuffersMapped, depthImageView, indexCount, &camera, objects, 9216, shaderStorageBuffersMapped, skyClearColor);
+        drawFrame(device, inFlightFences, imageAvailableSemaphores, swapChain, commandBuffers, renderPass, swapChainFrameBuffers, swapChainExtent, graphicsPipeline, renderFinishedSemaphores, graphicsQueue, presentQueue, currentFrame, physicalDevice, surface, window, swapChainImages, swapChainImageFormat, imageCount, swapChainImageViews, vertexBuffer, indexBuffer, pipelineLayout, descriptorSets, uniformBuffersMapped, depthImageView, indexCount, &camera, objects, 9216, shaderStorageBuffersMapped, skyClearColor, skyAmbient);
 
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
+
+        currentTick += 2.0f;
 
         if(glfwGetKey(window, GLFW_KEY_W)){
             vec3 direction = normalize(subtract(camera.center, camera.eye));

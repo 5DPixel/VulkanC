@@ -69,6 +69,11 @@ typedef struct {
     vec3 value;
 } Keyframe;
 
+typedef struct {
+    int time;
+    float value;
+} FloatKeyframe;
+
 extern const char* validationLayers[1];
 extern const char* deviceExtensions[1];
 

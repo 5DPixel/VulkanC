@@ -64,7 +64,7 @@ void createRenderPass(VkFormat swapChainImageFormat, VkRenderPass* renderPass, V
     dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;;
     dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;;
 
-    VkAttachmentDescription* attachments = (VkAttachmentDescription*)malloc(2 * sizeof(VkAttachmentDescription2));
+    VkAttachmentDescription* attachments = (VkAttachmentDescription*)malloc(2 * sizeof(VkAttachmentDescription));
     attachments[0] = colorAttachment;
     attachments[1] = depthAttachment;
 
@@ -235,7 +235,7 @@ void createGraphicsPipeline(VkDevice* device, VkExtent2D swapChainExtent, VkPipe
     }
 }
 
-void drawFrame(VkDevice device, VkFence* inFlightFences, VkSemaphore* imageAvailableSemaphores, VkSwapchainKHR swapChain, VkCommandBuffer* commandBuffers, VkRenderPass renderPass, VkFramebuffer* swapChainFramebuffers, VkExtent2D swapChainExtent, VkPipeline graphicsPipeline, VkSemaphore* renderFinishedSemaphores, VkQueue graphicsQueue, VkQueue presentQueue, uint32_t currentFrame, VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, GLFWwindow* window, VkImage* swapChainImages, VkFormat swapChainImageFormat, uint32_t imageCount, VkImageView* swapChainImageViews, VkBuffer vertexBuffer, VkBuffer indexBuffer, VkPipelineLayout pipelineLayout, VkDescriptorSet* descriptorSets, void** uniformBuffersMapped, VkImageView depthImageView, uint32_t indexCount, Camera* camera, GameObject* gameObjects, uint32_t gameObjectCount, void **shaderStorageBuffersMapped, vec3 clearColor){
+void drawFrame(VkDevice device, VkFence* inFlightFences, VkSemaphore* imageAvailableSemaphores, VkSwapchainKHR swapChain, VkCommandBuffer* commandBuffers, VkRenderPass renderPass, VkFramebuffer* swapChainFramebuffers, VkExtent2D swapChainExtent, VkPipeline graphicsPipeline, VkSemaphore* renderFinishedSemaphores, VkQueue graphicsQueue, VkQueue presentQueue, uint32_t currentFrame, VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, GLFWwindow* window, VkImage* swapChainImages, VkFormat swapChainImageFormat, uint32_t imageCount, VkImageView* swapChainImageViews, VkBuffer vertexBuffer, VkBuffer indexBuffer, VkPipelineLayout pipelineLayout, VkDescriptorSet* descriptorSets, void** uniformBuffersMapped, VkImageView depthImageView, uint32_t indexCount, Camera* camera, GameObject* gameObjects, uint32_t gameObjectCount, void **shaderStorageBuffersMapped, vec3 clearColor, float ambient){
     vkWaitForFences(device, 1, &inFlightFences[currentFrame], VK_TRUE, UINT64_MAX);
     
     uint32_t imageIndex;
@@ -253,7 +253,7 @@ void drawFrame(VkDevice device, VkFence* inFlightFences, VkSemaphore* imageAvail
     vkResetCommandBuffer(commandBuffers[currentFrame], 0);
     recordCommandBuffer(commandBuffers[currentFrame], imageIndex, renderPass, swapChainFramebuffers, swapChainExtent, graphicsPipeline, vertexBuffer, indexBuffer, pipelineLayout, descriptorSets, currentFrame, indexCount, &gameObjects, gameObjectCount, clearColor);
 
-    updateShaderStorageBuffers(currentFrame, swapChainExtent, shaderStorageBuffersMapped, gameObjects, gameObjectCount);
+    updateShaderStorageBuffers(currentFrame, swapChainExtent, shaderStorageBuffersMapped, gameObjects, gameObjectCount, ambient);
     updateUniformBuffer(currentFrame, swapChainExtent, uniformBuffersMapped, camera, gameObjects, gameObjectCount);
 
     VkSubmitInfo submitInfo = {0};
@@ -404,6 +404,35 @@ void createTextureSampler(VkPhysicalDevice physicalDevice, VkSampler* sampler, V
     samplerInfo.mipLodBias = 0.0f;
     samplerInfo.minLod = 0.0f;
     samplerInfo.maxLod = 0.0f;
+
+    if(vkCreateSampler(device, &samplerInfo, NULL, sampler) != VK_SUCCESS){
+        fprintf(stderr, "failed to create texture sampler!");
+    }
+}
+
+void createDepthSampler(VkPhysicalDevice physicalDevice, VkSampler* sampler, VkDevice device){
+    VkSamplerCreateInfo samplerInfo = {0};
+    samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
+    samplerInfo.magFilter = VK_FILTER_NEAREST;
+    samplerInfo.minFilter = VK_FILTER_NEAREST;
+    samplerInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+    samplerInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+    samplerInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+
+    samplerInfo.anisotropyEnable = VK_FALSE;
+
+    samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_NEAREST; 
+    samplerInfo.minLod = 0.0f;
+    samplerInfo.maxLod = 0.0f;
+    samplerInfo.mipLodBias = 0.0f; // Optional
+
+    samplerInfo.compareEnable = VK_TRUE; 
+    samplerInfo.compareOp = VK_COMPARE_OP_LESS_OR_EQUAL;
+
+    samplerInfo.maxAnisotropy = 1.0f;
+
+    samplerInfo.borderColor = VK_BORDER_COLOR_FLOAT_OPAQUE_BLACK;
+    samplerInfo.unnormalizedCoordinates = VK_FALSE;
 
     if(vkCreateSampler(device, &samplerInfo, NULL, sampler) != VK_SUCCESS){
         fprintf(stderr, "failed to create texture sampler!");
